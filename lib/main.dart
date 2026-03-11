@@ -63,36 +63,14 @@ class _Header extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              // Drapeau tricolore
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: const [
-                      ColoredBox(color: Color(0xFF002395), child: SizedBox(width: 6, height: 28)),
-                      ColoredBox(color: Colors.white,      child: SizedBox(width: 6, height: 28)),
-                      ColoredBox(color: Color(0xFFED2939), child: SizedBox(width: 6, height: 28)),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  const Text('LIBERTÉ',    style: TextStyle(fontSize: 7, letterSpacing: 1)),
-                  const Text('ÉGALITÉ',    style: TextStyle(fontSize: 7, letterSpacing: 1)),
-                  const Text('FRATERNITÉ', style: TextStyle(fontSize: 7, letterSpacing: 1)),
-                ],
-              ),
-              const SizedBox(width: 12),
-              // Titre ministère
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('MINISTÈRE',        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
-                    Text('DES SOLIDARITÉS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
-                    Text('ET DE LA SANTÉ',  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
-                  ],
-                ),
+              // Logo État — remplace 'assets/logo_etat.png' par ton chemin
+              Image.asset(
+                'assets/logo_etat.png',
+                height: 60,
+                fit: BoxFit.contain,
               ),
               // Hamburger
+              const Spacer(),
               IconButton(
                 icon: const Icon(Icons.menu, size: 28),
                 onPressed: () => debugPrint('[MENU] pressé'),
@@ -280,47 +258,22 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: const Color(0xFF1E1E1E),
+      color: const Color.fromARGB(255, 255, 255, 255),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo + titre
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: const [
-                        ColoredBox(color: Color(0xFF002395), child: SizedBox(width: 5, height: 24)),
-                        ColoredBox(color: Colors.white,      child: SizedBox(width: 5, height: 24)),
-                        ColoredBox(color: Color(0xFFED2939), child: SizedBox(width: 5, height: 24)),
-                      ],
-                    ),
-                    const SizedBox(height: 3),
-                    const Text('Liberté',    style: TextStyle(fontSize: 6, color: Colors.white)),
-                    const Text('Égalité',    style: TextStyle(fontSize: 6, color: Colors.white)),
-                    const Text('Fraternité', style: TextStyle(fontSize: 6, color: Colors.white)),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('MINISTÈRE',        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white)),
-                    Text('DES SOLIDARITÉS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white)),
-                    Text('ET DE LA SANTÉ',  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white)),
-                  ],
-                ),
-              ],
+            // Logo État — remplace 'assets/logo_etat.png' par ton chemin
+            Image.asset(
+              'assets/logo_etat.png',
+              height: 50,
+              fit: BoxFit.contain,
             ),
             const SizedBox(height: 16),
             const Text(
               'Ce site est géré par le Ministère des solidarités et de la Santé.',
-              style: TextStyle(color: Colors.white, fontSize: 12),
+              style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 12),
             ),
             const SizedBox(height: 16),
 
@@ -333,9 +286,9 @@ class _Footer extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(l, style: const TextStyle(color: Colors.white, fontSize: 12, decoration: TextDecoration.underline, decorationColor: Colors.white)),
+                    Text(l, style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 12, decoration: TextDecoration.underline, decorationColor: Colors.white)),
                     const SizedBox(width: 4),
-                    const Icon(Icons.open_in_new, color: Colors.white, size: 12),
+                    const Icon(Icons.open_in_new, color: Color.fromARGB(255, 0, 0, 0), size: 12),
                   ],
                 ),
               )).toList(),
@@ -350,19 +303,19 @@ class _Footer extends StatelessWidget {
               runSpacing: 8,
               children: _legalLinks.map((l) => GestureDetector(
                 onTap: () => debugPrint('[FOOTER LEGAL] $l pressé'),
-                child: Text(l, style: const TextStyle(color: Colors.white, fontSize: 11, decoration: TextDecoration.underline, decorationColor: Colors.white)),
+                child: Text(l, style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 11, decoration: TextDecoration.underline, decorationColor: Colors.white)),
               )).toList(),
             ),
             const SizedBox(height: 20),
             const Text(
               'Sauf mention contraire, tous les contenus de ce site sont soumis à la',
-              style: TextStyle(color: Colors.grey, fontSize: 10),
+              style: TextStyle(color: Color.fromARGB(255, 75, 75, 75), fontSize: 10),
             ),
             GestureDetector(
               onTap: () => debugPrint('[FOOTER] Licence Etalab pressée'),
               child: const Text(
                 'licence etalab-2.0',
-                style: TextStyle(color: Colors.white, fontSize: 10, decoration: TextDecoration.underline, decorationColor: Colors.white),
+                style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 10, decoration: TextDecoration.underline, decorationColor: Colors.white),
               ),
             ),
           ],
