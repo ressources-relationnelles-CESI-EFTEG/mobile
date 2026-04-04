@@ -62,6 +62,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dsfr:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: a93fb4dfb861fa7620b35c965bc7079eeecfc2f7
+      url: "https://github.com/Floating-Dartists/flutter_dsfr.git"
+    source: git
+    version: "0.0.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -70,6 +79,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
