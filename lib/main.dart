@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'core/app_theme.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/account_page.dart';
 import 'pages/messages_page.dart';
+import 'pages/add_ressource_page.dart';
 
 void main() => runApp(const App());
 
@@ -15,12 +18,14 @@ class App extends StatelessWidget {
       title: '(RE)SOURCES RELATIONNELLES',
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      initialRoute: '/dashboard',
+      initialRoute: '/login',
       routes: {
-        '/dashboard': (_) => const DashboardPage(),
-        '/account':   (_) => const AccountPage(),
-        '/messages':  (_) => const MessagesPage(),
-        // '/find-mentor': (_) => const FindMentorPage(), // à venir
+        '/login':         (_) => const LoginPage(),
+        '/register':      (_) => const RegisterPage(),
+        '/dashboard':     (_) => const DashboardPage(),
+        '/account':       (_) => const AccountPage(),
+        '/messages':      (_) => const MessagesPage(),
+        '/add-ressource': (_) => const AddRessourcePage(),
       },
     );
   }

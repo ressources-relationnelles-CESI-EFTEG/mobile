@@ -3,100 +3,91 @@ import 'package:intl/intl.dart';
 import '../core/app_theme.dart';
 import '../shared/app_scaffold.dart';
 import '../shared/models.dart';
+import '../shared/api_service.dart';
 
-// ─── PAGE LISTE DES CONVERSATIONS ────────────────────────────────────────────
-class MessagesPage extends StatelessWidget {
+class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
+  @override
+  State<MessagesPage> createState() => _MessagesPageState();
+}
 
-  // [BDD] fetch conversations WHERE participant_id = currentUser.id
-  List<ConversationModel> get _conversations => ConversationModel.placeholders();
+class _MessagesPageState extends State<MessagesPage> {
+  List<ConversationModel> _conversations = [];
+  bool _loading = true;
+  final int _myId = ApiService.session?.id ?? 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final data = await ApiService.fetchConversations(_myId);
+      setState(() {
+        _conversations = data.map(ConversationModel.fromJson).toList();
+        _loading = false;
+      });
+    } catch (_) {
+      setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
       navIndex: 2,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Titre
-          Container(
-            color: AppColors.white,
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-            child: const Row(children: [
-              Icon(Icons.chat_bubble_outline, color: AppColors.blue, size: 20),
-              SizedBox(width: 8),
-              Text('Messagerie',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.blue)),
-            ]),
-          ),
-          // Barre de recherche
-          Container(
-            color: AppColors.white,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Row(children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Icon(Icons.search, color: AppColors.grey, size: 18),
-                ),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Rechercher une conversation...',
-                      hintStyle: TextStyle(fontSize: 13, color: AppColors.grey),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+      body: Column(children: [
+        Container(
+          color: AppColors.white,
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+          child: const Row(children: [
+            Icon(Icons.chat_bubble_outline, color: AppColors.blue, size: 20),
+            SizedBox(width: 8),
+            Text('Messagerie',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.blue)),
+          ]),
+        ),
+        const Divider(height: 1, color: AppColors.border),
+        Expanded(
+          child: _loading
+              ? const Center(child: CircularProgressIndicator(color: AppColors.blueLight))
+              : _conversations.isEmpty
+                  ? const Center(child: Text('Aucune conversation', style: TextStyle(color: AppColors.grey)))
+                  : ListView.separated(
+                      itemCount: _conversations.length,
+                      separatorBuilder: (_, __) => const Divider(
+                          height: 1, color: AppColors.border, indent: 70),
+                      itemBuilder: (_, i) => _ConvTile(
+                        conv: _conversations[i],
+                        myId: _myId,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => _ChatPage(conv: _conversations[i], myId: _myId),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ]),
-            ),
-          ),
-          const Divider(height: 1, color: AppColors.border),
-          // Liste
-          Expanded(
-            child: ListView.separated(
-              itemCount: _conversations.length,
-              separatorBuilder: (_, __) => const Divider(height: 1, color: AppColors.border, indent: 70),
-              itemBuilder: (_, i) => _ConversationTile(
-                conv: _conversations[i],
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => _ChatPage(conv: _conversations[i]),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 }
 
-// ─── TUILE CONVERSATION ───────────────────────────────────────────────────────
-class _ConversationTile extends StatelessWidget {
+class _ConvTile extends StatelessWidget {
   final ConversationModel conv;
+  final int myId;
   final VoidCallback onTap;
-  const _ConversationTile({required this.conv, required this.onTap});
+  const _ConvTile({required this.conv, required this.myId, required this.onTap});
 
   String _formatTime(DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inDays == 0) return DateFormat('HH:mm').format(dt);
     if (diff.inDays == 1) return 'Hier';
-    return DateFormat('dd/MM/yy').format(dt);
+    return DateFormat('dd/MM').format(dt);
   }
-
-  IconData get _avatarIcon => conv.contactType == 'support' ? Icons.support_agent : Icons.person;
-  Color get _avatarBg => conv.contactType == 'support' ? AppColors.greenSurface : AppColors.blueSurface;
-  Color get _avatarColor => conv.contactType == 'support' ? AppColors.green : AppColors.blue;
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -104,67 +95,46 @@ class _ConversationTile extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(children: [
-            // Avatar + badge online
-            Stack(children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: _avatarBg,
-                child: Icon(_avatarIcon, color: _avatarColor, size: 24),
-              ),
-              if (conv.isOnline)
-                Positioned(
-                  right: 0, bottom: 0,
-                  child: Container(
-                    width: 11, height: 11,
-                    decoration: BoxDecoration(
-                      color: AppColors.green,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.white, width: 2),
-                    ),
-                  ),
-                ),
-            ]),
-            const SizedBox(width: 12),
-            // Contenu
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Text(conv.contactName,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: conv.unreadCount > 0 ? FontWeight.w800 : FontWeight.w600,
-                        color: AppColors.text,
-                      )),
-                  Text(_formatTime(conv.lastMessageAt),
-                      style: const TextStyle(fontSize: 11, color: AppColors.grey)),
-                ]),
-                const SizedBox(height: 4),
-                Row(children: [
-                  Expanded(
-                    child: Text(conv.lastMessage,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: conv.unreadCount > 0 ? AppColors.text : AppColors.grey,
-                          fontWeight: conv.unreadCount > 0 ? FontWeight.w500 : FontWeight.w400,
-                        ),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ),
-                  if (conv.unreadCount > 0) ...[
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.blueLight,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text('${conv.unreadCount}',
-                          style: const TextStyle(fontSize: 10, color: AppColors.white, fontWeight: FontWeight.w700)),
-                    ),
-                  ],
-                ]),
-              ]),
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: AppColors.blueSurface,
+              child: const Icon(Icons.person, color: AppColors.blue, size: 24),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(conv.contactName(myId),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: conv.hasUnread ? FontWeight.w800 : FontWeight.w600,
+                      color: AppColors.text,
+                    )),
+                Text(_formatTime(conv.lastMessageAt),
+                    style: const TextStyle(fontSize: 11, color: AppColors.grey)),
+              ]),
+              const SizedBox(height: 4),
+              Row(children: [
+                Expanded(
+                  child: Text(conv.lastMessagePreview,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: conv.hasUnread ? AppColors.text : AppColors.grey,
+                        fontWeight: conv.hasUnread ? FontWeight.w500 : FontWeight.w400,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                ),
+                if (conv.hasUnread)
+                  Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    width: 8, height: 8,
+                    decoration: const BoxDecoration(
+                      color: AppColors.blueLight,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+              ]),
+            ])),
             const Icon(Icons.chevron_right, color: AppColors.grey, size: 18),
           ]),
         ),
@@ -174,202 +144,141 @@ class _ConversationTile extends StatelessWidget {
 // ─── PAGE CHAT ────────────────────────────────────────────────────────────────
 class _ChatPage extends StatefulWidget {
   final ConversationModel conv;
-  const _ChatPage({required this.conv});
-
+  final int myId;
+  const _ChatPage({required this.conv, required this.myId});
   @override
   State<_ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<_ChatPage> {
-  final TextEditingController _inputCtrl = TextEditingController();
-  final ScrollController _scrollCtrl = ScrollController();
-
-  // [BDD] fetch messages WHERE conversation_id = conv.id ORDER BY created_at ASC
-  late List<ChatMessageModel> _messages;
+  final _ctrl = TextEditingController();
+  final _scroll = ScrollController();
+  List<MessageModel> _messages = [];
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _messages = ChatMessageModel.placeholders(widget.conv.id);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final data = await ApiService.fetchMessages(widget.conv.id);
+      setState(() {
+        _messages = data.map(MessageModel.fromJson).toList();
+        _loading = false;
+      });
+      // Marquer comme lus
+      await ApiService.markAsRead(widget.conv.id, widget.myId);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    } catch (_) {
+      setState(() => _loading = false);
+    }
   }
 
   void _scrollToBottom() {
-    if (_scrollCtrl.hasClients) {
-      _scrollCtrl.animateTo(_scrollCtrl.position.maxScrollExtent,
+    if (_scroll.hasClients) {
+      _scroll.animateTo(_scroll.position.maxScrollExtent,
           duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
     }
   }
 
-  void _sendMessage() {
-    final text = _inputCtrl.text.trim();
+  Future<void> _send() async {
+    final text = _ctrl.text.trim();
     if (text.isEmpty) return;
-    setState(() {
-      _messages = [
-        ..._messages,
-        ChatMessageModel(
-          id: 'cmsg_${DateTime.now().millisecondsSinceEpoch}',
-          conversationId: widget.conv.id,
-          senderId: 'user_001',
-          isMe: true,
-          body: text,
-          sentAt: DateTime.now(),
-        ),
-      ];
-      _inputCtrl.clear();
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-    // [BDD] POST messages { conversation_id, body, sender_id }
+    _ctrl.clear();
+    try {
+      final msg = await ApiService.sendMessage(
+        idConversation: widget.conv.id,
+        idUtilisateur: widget.myId,
+        contenu: text,
+      );
+      setState(() => _messages.add(MessageModel.fromJson(msg)));
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    } catch (_) {}
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(context),
-      body: Column(children: [
-        // Messages
-        Expanded(
-          child: ListView.builder(
-            controller: _scrollCtrl,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: _messages.length + 1,
-            itemBuilder: (_, i) {
-              if (i == 0) return _DateSeparator(date: _messages.first.sentAt);
-              return _ChatBubble(message: _messages[i - 1]);
-            },
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: AppColors.white,
+          elevation: 0,
+          surfaceTintColor: AppColors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.blue),
+            onPressed: () => Navigator.pop(context),
           ),
-        ),
-        // Barre de saisie
-        _InputBar(controller: _inputCtrl, onSend: _sendMessage),
-      ]),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) => AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        surfaceTintColor: AppColors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.blue),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(children: [
-          Stack(children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: AppColors.blueSurface,
-              child: const Icon(Icons.person, color: AppColors.blue, size: 18),
-            ),
-            if (widget.conv.isOnline)
-              Positioned(
-                right: 0, bottom: 0,
-                child: Container(
-                  width: 9, height: 9,
-                  decoration: BoxDecoration(
-                    color: AppColors.green, shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.white, width: 2),
-                  ),
-                ),
-              ),
+          title: Row(children: [
+            const CircleAvatar(radius: 18, backgroundColor: AppColors.blueSurface,
+                child: Icon(Icons.person, color: AppColors.blue, size: 18)),
+            const SizedBox(width: 10),
+            Text(widget.conv.contactName(widget.myId),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700,
+                    color: AppColors.text)),
           ]),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(widget.conv.contactName,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.text)),
-              Text(widget.conv.isOnline ? 'En ligne' : 'Hors ligne',
-                  style: TextStyle(fontSize: 11,
-                      color: widget.conv.isOnline ? AppColors.green : AppColors.grey)),
-            ]),
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(height: 1, color: AppColors.border),
           ),
-        ]),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.videocam_outlined, color: AppColors.grey),
-            onPressed: () {}, // [NAV] → Visio
-          ),
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: AppColors.grey),
-            onPressed: () {},
-          ),
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: AppColors.border),
         ),
-      );
-}
-
-// ─── SÉPARATEUR DATE ──────────────────────────────────────────────────────────
-class _DateSeparator extends StatelessWidget {
-  final DateTime date;
-  const _DateSeparator({required this.date});
-
-  String get _label {
-    final diff = DateTime.now().difference(date);
-    if (diff.inDays == 0) return 'Aujourd\'hui';
-    if (diff.inDays == 1) return 'Hier';
-    return DateFormat('dd MMMM yyyy').format(date);
-  }
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(children: [
-          const Expanded(child: Divider(color: AppColors.border)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(_label, style: const TextStyle(fontSize: 12, color: AppColors.grey)),
+        body: Column(children: [
+          Expanded(
+            child: _loading
+                ? const Center(child: CircularProgressIndicator(color: AppColors.blueLight))
+                : ListView.builder(
+                    controller: _scroll,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    itemCount: _messages.length,
+                    itemBuilder: (_, i) => _Bubble(msg: _messages[i], myId: widget.myId),
+                  ),
           ),
-          const Expanded(child: Divider(color: AppColors.border)),
+          _InputBar(ctrl: _ctrl, onSend: _send),
         ]),
       );
 }
 
-// ─── BULLE DE MESSAGE ────────────────────────────────────────────────────────
-class _ChatBubble extends StatelessWidget {
-  final ChatMessageModel message;
-  const _ChatBubble({required this.message});
+class _Bubble extends StatelessWidget {
+  final MessageModel msg;
+  final int myId;
+  const _Bubble({required this.msg, required this.myId});
 
   @override
   Widget build(BuildContext context) {
-    final maxWidth = MediaQuery.of(context).size.width * 0.72;
+    final isMe = msg.isMe(myId);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment: message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!message.isMe) ...[
-            const CircleAvatar(
-              radius: 14,
-              backgroundColor: AppColors.blueSurface,
-              child: Icon(Icons.person, color: AppColors.blue, size: 14),
-            ),
+          if (!isMe) ...[
+            const CircleAvatar(radius: 14, backgroundColor: AppColors.blueSurface,
+                child: Icon(Icons.person, color: AppColors.blue, size: 14)),
             const SizedBox(width: 8),
           ],
           Column(
-            crossAxisAlignment: message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               Container(
-                constraints: BoxConstraints(maxWidth: maxWidth),
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: message.isMe ? AppColors.blueSurface : AppColors.white,
+                  color: isMe ? AppColors.blueSurface : AppColors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: const Radius.circular(16),
                     topRight: const Radius.circular(16),
-                    bottomLeft: Radius.circular(message.isMe ? 16 : 4),
-                    bottomRight: Radius.circular(message.isMe ? 4 : 16),
+                    bottomLeft: Radius.circular(isMe ? 16 : 4),
+                    bottomRight: Radius.circular(isMe ? 4 : 16),
                   ),
-                  border: message.isMe ? null : Border.all(color: AppColors.border),
+                  border: isMe ? null : Border.all(color: AppColors.border),
                 ),
-                child: Text(message.body,
+                child: Text(msg.contenu,
                     style: const TextStyle(fontSize: 14, color: AppColors.text, height: 1.4)),
               ),
               const SizedBox(height: 4),
-              Text(DateFormat('HH:mm').format(message.sentAt),
+              Text(DateFormat('HH:mm').format(msg.dateEnvoi),
                   style: const TextStyle(fontSize: 11, color: AppColors.grey)),
             ],
           ),
@@ -379,11 +288,10 @@ class _ChatBubble extends StatelessWidget {
   }
 }
 
-// ─── BARRE DE SAISIE ─────────────────────────────────────────────────────────
 class _InputBar extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController ctrl;
   final VoidCallback onSend;
-  const _InputBar({required this.controller, required this.onSend});
+  const _InputBar({required this.ctrl, required this.onSend});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -393,10 +301,6 @@ class _InputBar extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(children: [
-          IconButton(
-            icon: const Icon(Icons.attach_file, color: AppColors.grey),
-            onPressed: () {}, // [BDD] upload pièce jointe
-          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -405,7 +309,7 @@ class _InputBar extends StatelessWidget {
                 border: Border.all(color: AppColors.border),
               ),
               child: TextField(
-                controller: controller,
+                controller: ctrl,
                 decoration: const InputDecoration(
                   hintText: 'Écrivez un message...',
                   hintStyle: TextStyle(fontSize: 13, color: AppColors.grey),
@@ -424,9 +328,7 @@ class _InputBar extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: const BoxDecoration(
-                color: AppColors.blueLight,
-                shape: BoxShape.circle,
-              ),
+                color: AppColors.blueLight, shape: BoxShape.circle),
               child: const Icon(Icons.send, color: AppColors.white, size: 18),
             ),
           ),
