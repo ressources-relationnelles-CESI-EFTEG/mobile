@@ -34,6 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
         nom: _nomCtrl.text.trim(),
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
+        confirmPassword: _confirmCtrl.text,
       );
       if (!mounted) return;
       await ApiService.login(_emailCtrl.text.trim(), _passCtrl.text);

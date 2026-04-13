@@ -25,36 +25,44 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _load() async {
-    final session = ApiService.session;
-    if (session == null) {
-      if (mounted) Navigator.pushReplacementNamed(context, '/login');
-      return;
-    }
-    try {
-      final results = await Future.wait([
-        ApiService.fetchUtilisateur(session.id),
-        ApiService.fetchRessources(),
-        ApiService.fetchConversations(session.id),
-      ]);
-      setState(() {
-        _user = UserModel.fromJson(results[0] as Map<String, dynamic>);
-        _ressources = (results[1] as List)
-            .map((r) => RessourceModel.fromJson(r as Map<String, dynamic>))
-            .take(2)
-            .toList();
-        _conversations = (results[2] as List)
-            .map((c) => ConversationModel.fromJson(c as Map<String, dynamic>))
-            .take(3)
-            .toList();
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() {
-        _user = UserModel.placeholder();
-        _loading = false;
-      });
-    }
+  final session = ApiService.session;
+  if (session == null) {
+    if (mounted) Navigator.pushReplacementNamed(context, '/login');
+    return;
   }
+  try {
+    // Requêtes obligatoires
+    final userResult = await ApiService.fetchUtilisateur(session.id);
+    final ressourcesResult = await ApiService.fetchRessources();
+
+    // Requête optionnelle : ne fait pas planter si elle échoue
+    List conversations = [];
+    try {
+      conversations = await ApiService.fetchConversations(session.id);
+    } catch (_) {
+      // Pas de conversations, c'est normal
+    }
+
+    setState(() {
+      _user = UserModel.fromJson(userResult as Map<String, dynamic>);
+      _ressources = (ressourcesResult as List)
+          .map((r) => RessourceModel.fromJson(r as Map<String, dynamic>))
+          .take(2)
+          .toList();
+      _conversations = conversations
+          .map((c) => ConversationModel.fromJson(c as Map<String, dynamic>))
+          .take(3)
+          .toList();
+      _loading = false;
+    });
+  } catch (e) {
+    debugPrint('ERREUR DASHBOARD: $e');
+    setState(() {
+      _user = UserModel.placeholder();
+      _loading = false;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {

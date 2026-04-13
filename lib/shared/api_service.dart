@@ -74,17 +74,18 @@ class ApiService {
     required String prenom,
     required String nom,
     required String email,
-    required String password,
+    required String password, 
+    required String confirmPassword,
   }) async {
     final res = await http.post(
       Uri.parse('$_base/auth/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'prenom': prenom,
-        'nom': nom,
+        'firstname': prenom,
+        'lastname': nom,
         'email': email,
         'password': password,
-        'repeatPassword': password,
+        'confirmPassword': password,
       }),
     );
     _check(res, '/auth/register');

@@ -6,7 +6,8 @@ class AppRoutes {
   static const dashboard  = '/dashboard';
   static const account    = '/account';
   static const messages   = '/messages';    // à venir
-  static const findMentor = '/find-mentor'; // à venir
+  static const findMentor = '/find-mentor';
+  static const accueil    = '/accueil'; // à venir
 }
 
 // ─── Items de navigation ──────────────────────────────────────────────────────
@@ -18,7 +19,7 @@ class _NavItem {
 }
 
 const _navItems = [
-  _NavItem(icon: Icons.home_outlined,           label: 'Accueil',        route: AppRoutes.dashboard),
+  _NavItem(icon: Icons.home_outlined,           label: 'Accueil',        route: AppRoutes.accueil),
   _NavItem(icon: Icons.dashboard_outlined,      label: 'Tableau de bord',route: AppRoutes.dashboard),
   _NavItem(icon: Icons.mail_outline,            label: 'Messagerie',     route: AppRoutes.messages),
   _NavItem(icon: Icons.person_search_outlined,  label: 'Trouver un mentor', route: AppRoutes.findMentor),

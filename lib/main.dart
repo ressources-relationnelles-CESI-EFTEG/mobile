@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/accueil.dart';
 import 'core/app_theme.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
@@ -26,6 +27,7 @@ class App extends StatelessWidget {
         '/account':       (_) => const AccountPage(),
         '/messages':      (_) => const MessagesPage(),
         '/add-ressource': (_) => const AddRessourcePage(),
+        '/accueil':       (_) => const AccueilPage(),
       },
     );
   }
