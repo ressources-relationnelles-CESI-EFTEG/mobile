@@ -7,6 +7,7 @@ import 'pages/dashboard_page.dart';
 import 'pages/account_page.dart';
 import 'pages/messages_page.dart';
 import 'pages/add_ressource_page.dart';
+import 'pages/mesressources_page.dart';
 
 void main() => runApp(const App());
 
@@ -28,6 +29,7 @@ class App extends StatelessWidget {
         '/messages':      (_) => const MessagesPage(),
         '/add-ressource': (_) => const AddRessourcePage(),
         '/accueil':       (_) => const AccueilPage(),
+        '/mes-ressources': (_) => const MesRessourcesPage(),
       },
     );
   }

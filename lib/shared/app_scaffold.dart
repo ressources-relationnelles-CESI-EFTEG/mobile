@@ -4,11 +4,11 @@ import '../core/app_theme.dart';
 
 // ─── Routes centralisées ──────────────────────────────────────────────────────
 class AppRoutes {
-  static const dashboard  = '/dashboard';
-  static const account    = '/account';
-  static const messages   = '/messages';    // à venir
-  static const findMentor = '/find-mentor';
-  static const accueil    = '/accueil'; // à venir
+  static const dashboard    = '/dashboard';
+  static const account      = '/account';
+  static const messages     = '/messages';
+  static const ressources   = '/mes-ressources';
+  static const accueil      = '/accueil';
 }
 
 // ─── Items de navigation ──────────────────────────────────────────────────────
@@ -20,11 +20,11 @@ class _NavItem {
 }
 
 const _navItems = [
-  _NavItem(icon: Icons.home_outlined,           label: 'Accueil',        route: AppRoutes.accueil),
-  _NavItem(icon: Icons.dashboard_outlined,      label: 'Tableau de bord',route: AppRoutes.dashboard),
-  _NavItem(icon: Icons.mail_outline,            label: 'Messagerie',     route: AppRoutes.messages),
-  _NavItem(icon: Icons.person_search_outlined,  label: 'Trouver un mentor', route: AppRoutes.findMentor),
-  _NavItem(icon: Icons.account_circle_outlined, label: 'Mon compte',     route: AppRoutes.account),
+  _NavItem(icon: Icons.home_outlined,           label: 'Accueil',         route: AppRoutes.accueil),
+  _NavItem(icon: Icons.dashboard_outlined,      label: 'Tableau de bord', route: AppRoutes.dashboard),
+  _NavItem(icon: Icons.mail_outline,            label: 'Messagerie',      route: AppRoutes.messages),
+  _NavItem(icon: Icons.library_books_outlined,  label: 'Ressources',      route: AppRoutes.ressources),
+  _NavItem(icon: Icons.account_circle_outlined, label: 'Mon compte',      route: AppRoutes.account),
 ];
 
 // ─── SCAFFOLD PARTAGÉ ────────────────────────────────────────────────────────
@@ -37,7 +37,7 @@ class AppScaffold extends StatelessWidget {
   void _navigate(BuildContext context, String route) {
     final current = ModalRoute.of(context)?.settings.name;
     if (current == route) {
-      Navigator.pop(context); // ferme le drawer si ouvert
+      Navigator.pop(context);
       return;
     }
     Navigator.pushReplacementNamed(context, route);
@@ -63,7 +63,6 @@ class AppScaffold extends StatelessWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 16,
       title: Row(children: [
-        // Drapeau FR
         SizedBox(
           width: 16, height: 22,
           child: Row(children: [
@@ -87,7 +86,7 @@ class AppScaffold extends StatelessWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: AppColors.blue),
-          onPressed: () {}, // [NAV] → SearchPage à venir
+          onPressed: () {},
         ),
         Builder(
           builder: (ctx) => IconButton(
@@ -109,7 +108,6 @@ class AppScaffold extends StatelessWidget {
       backgroundColor: AppColors.white,
       child: SafeArea(
         child: Column(children: [
-          // En-tête drawer
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
@@ -130,7 +128,6 @@ class AppScaffold extends StatelessWidget {
                         color: AppColors.white, height: 1.3)),
               ]),
               const SizedBox(height: 20),
-              // Avatar + nom utilisateur
               Row(children: [
                 const CircleAvatar(
                   radius: 22,
@@ -151,8 +148,6 @@ class AppScaffold extends StatelessWidget {
               ]),
             ]),
           ),
-
-          // Items de navigation
           const SizedBox(height: 8),
           ..._navItems.asMap().entries.map((e) {
             final i = e.key;
@@ -163,16 +158,13 @@ class AppScaffold extends StatelessWidget {
               label: item.label,
               selected: selected,
               onTap: () {
-                Navigator.pop(context); // ferme le drawer
+                Navigator.pop(context);
                 _navigate(context, item.route);
               },
             );
           }),
-
           const Spacer(),
           const Divider(color: AppColors.border),
-
-          // Déconnexion
           _DrawerItem(
             icon: Icons.logout,
             label: 'Se déconnecter',
@@ -215,7 +207,7 @@ class AppScaffold extends StatelessWidget {
                     Icon(item.icon, size: 22,
                         color: selected ? AppColors.blueLight : AppColors.grey),
                     const SizedBox(height: 3),
-                    Text(item.label.split(' ').first, // label court
+                    Text(item.label.split(' ').first,
                         style: TextStyle(
                           fontSize: 9,
                           fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
