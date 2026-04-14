@@ -45,6 +45,7 @@ class UserSession {
 class ApiService {
   static UserSession? session;
   static bool get isLoggedIn => session != null;
+  static String get baseUrl => _base;
 
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -93,6 +94,20 @@ class ApiService {
 
   static void logout() => session = null;
 
+  /// Met à jour la UserSession en mémoire après un PATCH profil.
+  static void refreshSession({String? firstname, String? lastname, String? email}) {
+    final s = session;
+    if (s == null) return;
+    session = UserSession(
+      accessToken: s.accessToken,
+      id: s.id,
+      firstname: firstname ?? s.firstname,
+      lastname: lastname ?? s.lastname,
+      email: email ?? s.email,
+      role: s.role,
+    );
+  }
+
   // ══════════════════════════════════════════════════════════════════════════
   // UTILISATEURS
   // ══════════════════════════════════════════════════════════════════════════
@@ -102,6 +117,24 @@ class ApiService {
     final res = await http.get(Uri.parse('$_base/utilisateurs/$id'), headers: _headers);
     _check(res, '/utilisateurs/$id');
     return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /// POST /utilisateurs/:id/photo  (multipart, field "photo")
+  static Future<Map<String, dynamic>> uploadPhoto(int id, String filePath) async {
+    final uri = Uri.parse('$_base/utilisateurs/$id/photo');
+    final req = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer ${session!.accessToken}'
+      ..files.add(await http.MultipartFile.fromPath('photo', filePath));
+    final streamed = await req.send();
+    final res = await http.Response.fromStream(streamed);
+    _check(res, '/utilisateurs/$id/photo POST');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /// DELETE /utilisateurs/:id/photo
+  static Future<void> deletePhoto(int id) async {
+    final res = await http.delete(Uri.parse('$_base/utilisateurs/$id/photo'), headers: _headers);
+    _check(res, '/utilisateurs/$id/photo DELETE');
   }
 
   /// PATCH /utilisateurs/:id
