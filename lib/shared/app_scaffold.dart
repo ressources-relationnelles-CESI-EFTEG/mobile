@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/shared/api_service.dart';
 import '../core/app_theme.dart';
 
 // ─── Routes centralisées ──────────────────────────────────────────────────────
@@ -138,10 +139,14 @@ class AppScaffold extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('Marie D.',        // [BDD] user.fullName
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.white)),
-                  Text('Connectée',
-                      style: TextStyle(fontSize: 12, color: AppColors.white.withOpacity(0.7))),
+                  Text(
+                    '${ApiService.session?.firstname ?? ''} ${ApiService.session?.lastname ?? ''}'.trim(),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.white),
+                  ),
+                  Text(
+                    ApiService.session != null ? 'Connecté(e)' : 'Non connecté(e)',
+                    style: TextStyle(fontSize: 12, color: AppColors.white.withOpacity(0.7)),
+                  ),
                 ]),
               ]),
             ]),
@@ -175,8 +180,9 @@ class AppScaffold extends StatelessWidget {
             textColor: Colors.red[600]!,
             iconColor: Colors.red[600]!,
             onTap: () {
+              ApiService.logout();
               Navigator.pop(context);
-              // [BDD] AuthService.logout() puis redirect login
+              Navigator.pushReplacementNamed(context, '/login');
             },
           ),
           const SizedBox(height: 12),
