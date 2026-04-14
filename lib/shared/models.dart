@@ -13,6 +13,7 @@ class UserModel {
   final String? description;
   final String? region;
   final String? telephone;
+  final String? phraseAccroche;
   final DateTime lastLogin;
 
   const UserModel({
@@ -23,6 +24,7 @@ class UserModel {
     this.description,
     this.region,
     this.telephone,
+    this.phraseAccroche,
     required this.lastLogin,
   });
 
@@ -36,6 +38,7 @@ class UserModel {
         description: d['description'],
         region: d['region'],
         telephone: d['telephone'],
+        phraseAccroche: d['phraseAccroche'],
         lastLogin: d['dateCreation'] != null
             ? DateTime.parse(d['dateCreation'])
             : DateTime.now(),

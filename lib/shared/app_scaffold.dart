@@ -7,7 +7,7 @@ class AppRoutes {
   static const dashboard    = '/dashboard';
   static const account      = '/account';
   static const messages     = '/messages';
-  static const ressources   = '/mes-ressources';
+  static const ressources   = '/ressources';
   static const accueil      = '/accueil';
 }
 
@@ -63,26 +63,13 @@ class AppScaffold extends StatelessWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 16,
       title: Row(children: [
-        SizedBox(
-          width: 16, height: 22,
-          child: Row(children: [
-            Expanded(child: Container(color: AppColors.blue)),
-            Expanded(child: Container(color: AppColors.white)),
-            Expanded(child: Container(color: AppColors.red)),
-          ]),
-        ),
-        const SizedBox(width: 10),
-        const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('MINISTÈRE', style: TextStyle(fontSize: 7, fontWeight: FontWeight.w700, color: AppColors.blue, letterSpacing: 0.5)),
-          Text('DES SOLIDARITÉS', style: TextStyle(fontSize: 6, fontWeight: FontWeight.w500, color: AppColors.blue)),
-          Text('ET DE LA SANTÉ',  style: TextStyle(fontSize: 6, fontWeight: FontWeight.w500, color: AppColors.blue)),
-        ]),
-        const SizedBox(width: 12),
-        Container(width: 1, height: 30, color: AppColors.border),
+        Image.asset('assets/logo_etat.png', height: 40),
         const SizedBox(width: 12),
         const Text('(RE)SOURCES\nRELATIONNELLES',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.blue, height: 1.3)),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800,
+                color: AppColors.blue, height: 1.3)),
       ]),
+        
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: AppColors.blue),

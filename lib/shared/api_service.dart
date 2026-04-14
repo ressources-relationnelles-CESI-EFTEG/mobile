@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 // Émulateur Android  → 10.0.2.2:3001
-// Simulateur iOS/web → 127.0.0.1:3001
+// Simulateur iOS/web → localhost:3001
 // Vrai appareil      → IP de ta machine ex: 192.168.1.XX:3001
 const String _base = 'http://10.0.2.2:3001';
 
@@ -25,9 +25,10 @@ class UserSession {
     required this.role,
   });
 
-  String get fullName => '${firstname ?? ''} ${lastname != null ? '${lastname![0]}.' : ''}'.trim();
+  String get fullName =>
+      '${firstname ?? ''} ${lastname != null ? '${lastname![0]}.' : ''}'
+          .trim();
 
-  // Réponse login: { accessToken, refreshToken, user: { id, firstname, lastname, email, role } }
   factory UserSession.fromLogin(Map<String, dynamic> json) {
     final user = json['user'] as Map<String, dynamic>;
     return UserSession(
@@ -45,6 +46,7 @@ class UserSession {
 class ApiService {
   static UserSession? session;
   static bool get isLoggedIn => session != null;
+  static String get baseUrl => _base;
 
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -55,8 +57,7 @@ class ApiService {
   // AUTH
   // ══════════════════════════════════════════════════════════════════════════
 
-  /// POST /auth/login
-  /// Body: { email, password }
+  /// POST /auth/login — { email, password }
   static Future<UserSession> login(String email, String password) async {
     final res = await http.post(
       Uri.parse('$_base/auth/login'),
@@ -68,13 +69,12 @@ class ApiService {
     return session!;
   }
 
-  /// POST /auth/register
-  /// Body: { prenom, nom, email, password, repeatPassword }
+  /// POST /auth/register — { firstname, lastname, email, password, confirmPassword }
   static Future<void> register({
     required String prenom,
     required String nom,
     required String email,
-    required String password, 
+    required String password,
     required String confirmPassword,
   }) async {
     final res = await http.post(
@@ -85,7 +85,7 @@ class ApiService {
         'lastname': nom,
         'email': email,
         'password': password,
-        'confirmPassword': password,
+        'confirmPassword': confirmPassword,
       }),
     );
     _check(res, '/auth/register');
@@ -93,22 +93,66 @@ class ApiService {
 
   static void logout() => session = null;
 
+  static void refreshSession({
+    String? firstname,
+    String? lastname,
+    String? email,
+  }) {
+    final s = session;
+    if (s == null) return;
+    session = UserSession(
+      accessToken: s.accessToken,
+      id: s.id,
+      firstname: firstname ?? s.firstname,
+      lastname: lastname ?? s.lastname,
+      email: email ?? s.email,
+      role: s.role,
+    );
+  }
+
   // ══════════════════════════════════════════════════════════════════════════
   // UTILISATEURS
   // ══════════════════════════════════════════════════════════════════════════
 
   /// GET /utilisateurs/:id
   static Future<Map<String, dynamic>> fetchUtilisateur(int id) async {
-    final res = await http.get(Uri.parse('$_base/utilisateurs/$id'), headers: _headers);
+    final res = await http.get(
+        Uri.parse('$_base/utilisateurs/$id'),
+        headers: _headers);
     _check(res, '/utilisateurs/$id');
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
   /// PATCH /utilisateurs/:id
-  static Future<Map<String, dynamic>> updateUtilisateur(int id, Map<String, dynamic> data) async {
-    final res = await http.patch(Uri.parse('$_base/utilisateurs/$id'), headers: _headers, body: jsonEncode(data));
+  static Future<Map<String, dynamic>> updateUtilisateur(
+      int id, Map<String, dynamic> data) async {
+    final res = await http.patch(
+        Uri.parse('$_base/utilisateurs/$id'),
+        headers: _headers,
+        body: jsonEncode(data));
     _check(res, '/utilisateurs/$id PATCH');
     return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /// POST /utilisateurs/:id/photo
+  static Future<Map<String, dynamic>> uploadPhoto(
+      int id, String filePath) async {
+    final uri = Uri.parse('$_base/utilisateurs/$id/photo');
+    final req = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer ${session!.accessToken}'
+      ..files.add(await http.MultipartFile.fromPath('photo', filePath));
+    final streamed = await req.send();
+    final res = await http.Response.fromStream(streamed);
+    _check(res, '/utilisateurs/$id/photo POST');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /// DELETE /utilisateurs/:id/photo
+  static Future<void> deletePhoto(int id) async {
+    final res = await http.delete(
+        Uri.parse('$_base/utilisateurs/$id/photo'),
+        headers: _headers);
+    _check(res, '/utilisateurs/$id/photo DELETE');
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -116,32 +160,53 @@ class ApiService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// GET /ressources
-  static Future<List<Map<String, dynamic>>> fetchRessources({int? categorieId}) async {
+  static Future<List<Map<String, dynamic>>> fetchRessources(
+      {int? categorieId}) async {
     final uri = Uri.parse('$_base/ressources').replace(
-      queryParameters: categorieId != null ? {'categorieId': categorieId.toString()} : null,
+      queryParameters: categorieId != null
+          ? {'categorieId': categorieId.toString()}
+          : null,
     );
     final res = await http.get(uri, headers: _headers);
     _check(res, '/ressources');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
+  /// GET /ressources/:id
+  static Future<Map<String, dynamic>> fetchRessource(int id) async {
+    final res = await http.get(
+        Uri.parse('$_base/ressources/$id'),
+        headers: _headers);
+    _check(res, '/ressources/$id');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
   /// GET /ressources/utilisateur/:id
-  static Future<List<Map<String, dynamic>>> fetchRessourcesUtilisateur(int id) async {
-    final res = await http.get(Uri.parse('$_base/ressources/utilisateur/$id'), headers: _headers);
+  static Future<List<Map<String, dynamic>>> fetchRessourcesUtilisateur(
+      int id) async {
+    final res = await http.get(
+        Uri.parse('$_base/ressources/utilisateur/$id'),
+        headers: _headers);
     _check(res, '/ressources/utilisateur/$id');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
   /// POST /ressources
-  static Future<Map<String, dynamic>> createRessource(Map<String, dynamic> data) async {
-    final res = await http.post(Uri.parse('$_base/ressources'), headers: _headers, body: jsonEncode(data));
+  static Future<Map<String, dynamic>> createRessource(
+      Map<String, dynamic> data) async {
+    final res = await http.post(
+        Uri.parse('$_base/ressources'),
+        headers: _headers,
+        body: jsonEncode(data));
     _check(res, '/ressources POST');
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
   /// DELETE /ressources/:id
   static Future<void> deleteRessource(int id) async {
-    final res = await http.delete(Uri.parse('$_base/ressources/$id'), headers: _headers);
+    final res = await http.delete(
+        Uri.parse('$_base/ressources/$id'),
+        headers: _headers);
     _check(res, '/ressources/$id DELETE');
   }
 
@@ -151,7 +216,9 @@ class ApiService {
 
   /// GET /categories
   static Future<List<Map<String, dynamic>>> fetchCategories() async {
-    final res = await http.get(Uri.parse('$_base/categories'), headers: _headers);
+    final res = await http.get(
+        Uri.parse('$_base/categories'),
+        headers: _headers);
     _check(res, '/categories');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
@@ -162,14 +229,18 @@ class ApiService {
 
   /// GET /favoris/utilisateur/:id
   static Future<List<Map<String, dynamic>>> fetchFavoris(int id) async {
-    final res = await http.get(Uri.parse('$_base/favoris/utilisateur/$id'), headers: _headers);
+    final res = await http.get(
+        Uri.parse('$_base/favoris/utilisateur/$id'),
+        headers: _headers);
     _check(res, '/favoris/utilisateur/$id');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
   /// DELETE /favoris/:userId/:ressourceId
   static Future<void> removeFavori(int userId, int ressourceId) async {
-    final res = await http.delete(Uri.parse('$_base/favoris/$userId/$ressourceId'), headers: _headers);
+    final res = await http.delete(
+        Uri.parse('$_base/favoris/$userId/$ressourceId'),
+        headers: _headers);
     _check(res, '/favoris DELETE');
   }
 
@@ -179,7 +250,9 @@ class ApiService {
 
   /// GET /progressions/utilisateur/:id
   static Future<List<Map<String, dynamic>>> fetchProgressions(int id) async {
-    final res = await http.get(Uri.parse('$_base/progressions/utilisateur/$id'), headers: _headers);
+    final res = await http.get(
+        Uri.parse('$_base/progressions/utilisateur/$id'),
+        headers: _headers);
     _check(res, '/progressions/utilisateur/$id');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
@@ -189,39 +262,50 @@ class ApiService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /// GET /messagerie/conversations/utilisateur/:id
-  static Future<List<Map<String, dynamic>>> fetchConversations(int id) async {
-    final res = await http.get(Uri.parse('$_base/messagerie/conversations/utilisateur/$id'), headers: _headers);
+  static Future<List<Map<String, dynamic>>> fetchConversations(
+      int id) async {
+    final res = await http.get(
+        Uri.parse('$_base/messagerie/conversations/utilisateur/$id'),
+        headers: _headers);
     _check(res, '/messagerie/conversations/utilisateur/$id');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
   /// GET /messagerie/conversations/:id/messages
-  static Future<List<Map<String, dynamic>>> fetchMessages(int idConversation) async {
-    final res = await http.get(Uri.parse('$_base/messagerie/conversations/$idConversation/messages'), headers: _headers);
+  static Future<List<Map<String, dynamic>>> fetchMessages(
+      int idConversation) async {
+    final res = await http.get(
+        Uri.parse(
+            '$_base/messagerie/conversations/$idConversation/messages'),
+        headers: _headers);
     _check(res, '/messagerie/conversations/$idConversation/messages');
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
   /// POST /messagerie/conversations/:id/messages
-  /// Body: { idUtilisateur, contenu }
   static Future<Map<String, dynamic>> sendMessage({
     required int idConversation,
     required int idUtilisateur,
     required String contenu,
   }) async {
     final res = await http.post(
-      Uri.parse('$_base/messagerie/conversations/$idConversation/messages'),
+      Uri.parse(
+          '$_base/messagerie/conversations/$idConversation/messages'),
       headers: _headers,
-      body: jsonEncode({'idUtilisateur': idUtilisateur, 'contenu': contenu}),
+      body: jsonEncode(
+          {'idUtilisateur': idUtilisateur, 'contenu': contenu}),
     );
-    _check(res, '/messagerie/conversations/$idConversation/messages POST');
+    _check(res,
+        '/messagerie/conversations/$idConversation/messages POST');
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
   /// PATCH /messagerie/conversations/:id/lu/:userId
-  static Future<void> markAsRead(int idConversation, int idUtilisateur) async {
+  static Future<void> markAsRead(
+      int idConversation, int idUtilisateur) async {
     final res = await http.patch(
-      Uri.parse('$_base/messagerie/conversations/$idConversation/lu/$idUtilisateur'),
+      Uri.parse(
+          '$_base/messagerie/conversations/$idConversation/lu/$idUtilisateur'),
       headers: _headers,
     );
     _check(res, '/messagerie/lu PATCH');
@@ -237,9 +321,13 @@ class ApiService {
       try {
         final json = jsonDecode(res.body);
         final m = json['message'];
-        message = m is List ? m.join(', ') : m?.toString() ?? res.body;
+        message =
+            m is List ? m.join(', ') : m?.toString() ?? res.body;
       } catch (_) {}
-      throw ApiException(statusCode: res.statusCode, endpoint: endpoint, message: message);
+      throw ApiException(
+          statusCode: res.statusCode,
+          endpoint: endpoint,
+          message: message);
     }
   }
 }
@@ -250,13 +338,18 @@ class ApiException implements Exception {
   final String endpoint;
   final String message;
 
-  const ApiException({required this.statusCode, required this.endpoint, required this.message});
+  const ApiException({
+    required this.statusCode,
+    required this.endpoint,
+    required this.message,
+  });
 
   @override
-  String toString() => 'ApiException [$statusCode] $endpoint: $message';
+  String toString() =>
+      'ApiException [$statusCode] $endpoint: $message';
 
   bool get isUnauthorized => statusCode == 401;
-  bool get isNotFound     => statusCode == 404;
-  bool get isConflict     => statusCode == 409;
-  bool get isBadRequest   => statusCode == 400;
-} 
+  bool get isNotFound => statusCode == 404;
+  bool get isConflict => statusCode == 409;
+  bool get isBadRequest => statusCode == 400;
+}
