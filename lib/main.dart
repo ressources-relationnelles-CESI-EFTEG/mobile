@@ -7,7 +7,8 @@ import 'pages/dashboard_page.dart';
 import 'pages/account_page.dart';
 import 'pages/messages_page.dart';
 import 'pages/add_ressource_page.dart';
-
+import 'pages/mesressources_page.dart';
+import 'pages/ressources_page.dart';
 void main() => runApp(const App());
 
 class App extends StatelessWidget {
@@ -21,13 +22,15 @@ class App extends StatelessWidget {
       theme: appTheme,
       initialRoute: '/login',
       routes: {
-        '/login':         (_) => const LoginPage(),
-        '/register':      (_) => const RegisterPage(),
-        '/dashboard':     (_) => const DashboardPage(),
-        '/account':       (_) => const AccountPage(),
-        '/messages':      (_) => const MessagesPage(),
-        '/add-ressource': (_) => const AddRessourcePage(),
-        '/accueil':       (_) => const AccueilPage(),
+        '/login':          (_) => const LoginPage(),
+        '/register':       (_) => const RegisterPage(),
+        '/dashboard':      (_) => const DashboardPage(),
+        '/account':        (_) => const AccountPage(),
+        '/messages':       (_) => const MessagesPage(),
+        '/add-ressource':  (_) => const AddRessourcePage(),
+        '/mes-ressources': (_) => const MesRessourcesPage(),
+        '/ressources':     (_) => const RessourcesPage(),
+        '/accueil':        (_) => const AccueilPage(),
       },
     );
   }

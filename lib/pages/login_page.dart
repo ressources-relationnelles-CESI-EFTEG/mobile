@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../shared/api_service.dart';
 
-// ════════════════════════════════════════════════════════════════════════════
-// LOGIN PAGE
-// ════════════════════════════════════════════════════════════════════════════
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
   @override
@@ -18,7 +15,11 @@ class _LoginPageState extends State<LoginPage> {
   String? _error;
 
   @override
-  void dispose() { _emailCtrl.dispose(); _passCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
@@ -31,8 +32,8 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => _error = e.isUnauthorized
           ? 'Identifiants invalides.'
           : 'Erreur API (${e.statusCode}). Vérifie que le backend tourne.');
-    } catch (_) {
-      setState(() => _error = 'Erreur inconnue pendant la connexion.');
+    } catch (e) {
+      setState(() => _error = 'Erreur : $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -48,36 +49,63 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text('Connexion à Ressources relationnelles',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Color(0xFF1A1A1A), height: 1.3)),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800,
+                        color: Color(0xFF1A1A1A), height: 1.3)),
                 const SizedBox(height: 12),
-                const Text('Connectez-vous pour accéder à votre espace personnel, vos ressources et votre messagerie.',
+                const Text('Connectez-vous pour accéder à votre espace personnel.',
                     style: TextStyle(fontSize: 14, color: Color(0xFF666666), height: 1.5)),
                 const SizedBox(height: 24),
-                const FCInfoBanner(text: "La connexion nécessite un compte existant. Si vous n'avez pas encore de compte, vous pouvez vous inscrire."),
+                const FCInfoBanner(
+                    text: "La connexion nécessite un compte existant. "
+                        "Si vous n'avez pas encore de compte, vous pouvez vous inscrire."),
                 const SizedBox(height: 28),
                 const Text('Informations de connexion',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF1A1A1A))),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A1A1A))),
                 const SizedBox(height: 20),
-                const Text('Adresse e-mail', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF1A1A1A))),
+                const Text('Adresse e-mail',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500,
+                        color: Color(0xFF1A1A1A))),
                 const SizedBox(height: 4),
-                const Text('Format attendu : nom@domaine.fr', style: TextStyle(fontSize: 12, color: Color(0xFF666666))),
+                const Text('Format attendu : nom@domaine.fr',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF666666))),
                 const SizedBox(height: 6),
-                FCField(controller: _emailCtrl, keyboardType: TextInputType.emailAddress,
-                    validator: (v) => v == null || !v.contains('@') ? 'Email invalide' : null),
+                FCField(
+                  controller: _emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Email invalide' : null,
+                ),
                 const SizedBox(height: 20),
-                const Text('Mot de passe', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF1A1A1A))),
+                const Text('Mot de passe',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500,
+                        color: Color(0xFF1A1A1A))),
                 const SizedBox(height: 6),
-                FCField(controller: _passCtrl, obscure: true,
-                    validator: (v) => v == null || v.isEmpty ? 'Mot de passe requis' : null),
+                FCField(
+                  controller: _passCtrl,
+                  obscure: true,
+                  validator: (v) => v == null || v.isEmpty
+                      ? 'Mot de passe requis' : null,
+                ),
                 const SizedBox(height: 28),
-                if (_error != null) ...[FCErrorBanner(text: _error!), const SizedBox(height: 16)],
+                if (_error != null) ...[
+                  FCErrorBanner(text: _error!),
+                  const SizedBox(height: 16),
+                ],
                 Row(children: [
-                  FCPrimaryBtn(label: _loading ? 'Connexion...' : 'Se connecter', onTap: _loading ? null : _login),
+                  FCPrimaryBtn(
+                    label: _loading ? 'Connexion...' : 'Se connecter',
+                    onTap: _loading ? null : _login,
+                  ),
                   const SizedBox(width: 12),
-                  FCOutlineBtn(label: 'Créer un compte', onTap: () => Navigator.pushNamed(context, '/register')),
+                  FCOutlineBtn(
+                    label: 'Créer un compte',
+                    onTap: () => Navigator.pushNamed(context, '/register'),
+                  ),
                 ]),
                 const SizedBox(height: 24),
-                const Text('En vous connectant, vous accédez à vos ressources personnelles et à votre messagerie.',
+                const Text(
+                    'En vous connectant, vous accédez à vos ressources personnelles.',
                     style: TextStyle(fontSize: 12, color: Color(0xFF666666), height: 1.5)),
               ]),
             ),
@@ -86,9 +114,9 @@ class _LoginPageState extends State<LoginPage> {
       );
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// COMPOSANTS PARTAGÉS (publics pour register_page)
-// ════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════
+// COMPOSANTS PARTAGÉS (utilisés aussi par register_page.dart)
+// ══════════════════════════════════════════════════════════════════════════════
 
 class FCInfoBanner extends StatelessWidget {
   final String text;
@@ -107,19 +135,29 @@ class FCInfoBanner extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: const BoxDecoration(
               color: Color(0xFF1C3177),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(2), bottomLeft: Radius.circular(2)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(2), bottomLeft: Radius.circular(2)),
             ),
-            child: const Center(child: Text('i',
-                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800, fontStyle: FontStyle.italic))),
+            child: const Center(
+              child: Text('i',
+                  style: TextStyle(color: Colors.white, fontSize: 18,
+                      fontWeight: FontWeight.w800, fontStyle: FontStyle.italic)),
+            ),
           ),
-          Expanded(child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Information', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF1A1A1A))),
-              const SizedBox(height: 6),
-              Text(text, style: const TextStyle(fontSize: 13, color: Color(0xFF333333), height: 1.5)),
-            ]),
-          )),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Information',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A))),
+                const SizedBox(height: 6),
+                Text(text,
+                    style: const TextStyle(fontSize: 13, color: Color(0xFF333333),
+                        height: 1.5)),
+              ]),
+            ),
+          ),
         ]),
       );
 }
@@ -139,7 +177,10 @@ class FCErrorBanner extends StatelessWidget {
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Icon(Icons.error_outline, color: Colors.red, size: 18),
           const SizedBox(width: 8),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 13, color: Colors.red, height: 1.4))),
+          Expanded(
+            child: Text(text,
+                style: const TextStyle(fontSize: 13, color: Colors.red, height: 1.4)),
+          ),
         ]),
       );
 }
@@ -169,11 +210,16 @@ class FCField extends StatelessWidget {
           filled: true,
           fillColor: Color(0xFFF0F0F0),
           contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-          border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 1.5)),
-          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 1.5)),
-          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF1C3177), width: 2)),
-          errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1.5)),
-          focusedErrorBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 2)),
+          border: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 1.5)),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 1.5)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF1C3177), width: 2)),
+          errorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red, width: 1.5)),
+          focusedErrorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red, width: 2)),
         ),
       );
 }
@@ -193,7 +239,8 @@ class FCPrimaryBtn extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
           elevation: 0,
         ),
-        child: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        child: Text(label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
       );
 }
 
@@ -211,6 +258,7 @@ class FCOutlineBtn extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
         ),
-        child: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        child: Text(label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
       );
 }
