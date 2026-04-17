@@ -123,6 +123,24 @@ class ApiService {
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
+  /// POST /utilisateurs/:id/photo  (multipart, field "photo")
+  static Future<Map<String, dynamic>> uploadPhoto(int id, String filePath) async {
+    final uri = Uri.parse('$_base/utilisateurs/$id/photo');
+    final req = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer ${session!.accessToken}'
+      ..files.add(await http.MultipartFile.fromPath('photo', filePath));
+    final streamed = await req.send();
+    final res = await http.Response.fromStream(streamed);
+    _check(res, '/utilisateurs/$id/photo POST');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /// DELETE /utilisateurs/:id/photo
+  static Future<void> deletePhoto(int id) async {
+    final res = await http.delete(Uri.parse('$_base/utilisateurs/$id/photo'), headers: _headers);
+    _check(res, '/utilisateurs/$id/photo DELETE');
+  }
+
   /// PATCH /utilisateurs/:id
   static Future<Map<String, dynamic>> updateUtilisateur(
       int id, Map<String, dynamic> data) async {
