@@ -76,10 +76,6 @@ class AppScaffold extends StatelessWidget {
                 color: AppColors.blue, height: 1.3)),
       ]),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.search, color: AppColors.blue),
-          onPressed: () {},
-        ),
         Builder(
           builder: (ctx) => IconButton(
             icon: const Icon(Icons.menu, color: AppColors.blue),
