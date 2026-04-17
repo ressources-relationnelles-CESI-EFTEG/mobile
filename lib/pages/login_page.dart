@@ -48,6 +48,21 @@ class _LoginPageState extends State<LoginPage> {
             child: Form(
               key: _formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+                // ── Logo + Titre ───────────────────────────────────────────
+                Row(children: [
+                  Image.asset('assets/logo_etat.png', height: 60),
+                  const SizedBox(width: 20),
+                  const Text('Ressources\nrelationnelles',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                        height: 1.3,
+                      )),
+                ]),
+                const SizedBox(height: 24),
+
                 const Text('Connexion à Ressources relationnelles',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800,
                         color: Color(0xFF1A1A1A), height: 1.3)),
@@ -115,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// COMPOSANTS PARTAGÉS (utilisés aussi par register_page.dart)
+// COMPOSANTS PARTAGÉS
 // ══════════════════════════════════════════════════════════════════════════════
 
 class FCInfoBanner extends StatelessWidget {

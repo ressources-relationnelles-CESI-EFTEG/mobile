@@ -1,14 +1,15 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/shared/api_service.dart';
 import '../core/app_theme.dart';
 
 // ─── Routes centralisées ──────────────────────────────────────────────────────
 class AppRoutes {
-  static const dashboard    = '/dashboard';
-  static const account      = '/account';
-  static const messages     = '/messages';
-  static const ressources   = '/ressources';
-  static const accueil      = '/accueil';
+  static const dashboard  = '/dashboard';
+  static const account    = '/account';
+  static const messages   = '/messages';
+  static const ressources = '/ressources';
+  static const accueil    = '/accueil';
 }
 
 // ─── Items de navigation ──────────────────────────────────────────────────────
@@ -49,7 +50,12 @@ class AppScaffold extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: _buildAppBar(context),
       drawer: _buildDrawer(context),
-      body: body,
+      body: Column(
+        children: [
+          Expanded(child: body),
+          const AppFooter(),
+        ],
+      ),
       bottomNavigationBar: _buildBottomNav(context),
     );
   }
@@ -69,7 +75,6 @@ class AppScaffold extends StatelessWidget {
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800,
                 color: AppColors.blue, height: 1.3)),
       ]),
-        
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: AppColors.blue),
@@ -218,6 +223,136 @@ class AppScaffold extends StatelessWidget {
       ),
     );
   }
+}
+
+// ─── FOOTER ──────────────────────────────────────────────────────────────────
+class AppFooter extends StatelessWidget {
+  const AppFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          const Divider(height: 1, color: Color(0xFF1C3177), thickness: 2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Ligne principale : logo + texte ─────────────────────
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Logo Ministère
+                    Expanded(
+                      flex: 2,
+                      child: Image.asset('assets/logo_etat.png', height: 100),
+                    ),
+                    const SizedBox(width: 16),
+                    // Texte + liens
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Ce site est géré par le Ministère des solidarités et de la santé',
+                            style: TextStyle(fontSize: 10, color: Color(0xFF333333), height: 1.4),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 6,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              _FooterLink(label: 'info.gouv.fr', url: 'https://info.gouv.fr'),
+                              _FooterLink(label: 'service-public.fr', url: 'https://www.service-public.fr'),
+                              _FooterLink(label: 'legifrance.gouv.fr', url: 'https://www.legifrance.gouv.fr'),
+                              _FooterLink(label: 'data.gouv.fr', url: 'https://www.data.gouv.fr'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Divider(height: 1, color: Color(0xFFDDDDDD)),
+                const SizedBox(height: 12),
+                // ── Liens bas de page ────────────────────────────────────
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    _FooterSmallLink(label: 'Accessibilité'),
+                    const _FooterSep(),
+                    _FooterSmallLink(label: 'Mentions légales'),
+                    const _FooterSep(),
+                    _FooterSmallLink(label: 'Données personnelles'),
+                    const _FooterSep(),
+                    _FooterSmallLink(label: 'Gestion des cookies'),
+                    const _FooterSep(),
+                    _FooterSmallLink(label: 'Plan du site'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FooterLink extends StatelessWidget {
+  final String label;
+  final String url;
+  const _FooterLink({required this.label, required this.url});
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () async {
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: Color(0xFF1C3177),
+                  decoration: TextDecoration.underline,
+                )),
+            const SizedBox(width: 2),
+            const Icon(Icons.open_in_new, size: 10, color: Color(0xFF1C3177)),
+          ],
+        ),
+      );
+}
+
+class _FooterSmallLink extends StatelessWidget {
+  final String label;
+  const _FooterSmallLink({required this.label});
+
+  @override
+  Widget build(BuildContext context) => Text(label,
+      style: const TextStyle(
+        fontSize: 9,
+        color: Color(0xFF1C3177),
+        decoration: TextDecoration.underline,
+      ));
+}
+
+class _FooterSep extends StatelessWidget {
+  const _FooterSep();
+
+  @override
+  Widget build(BuildContext context) =>
+      const Text('|', style: TextStyle(fontSize: 9, color: Color(0xFF999999)));
 }
 
 // ─── DRAWER ITEM ─────────────────────────────────────────────────────────────

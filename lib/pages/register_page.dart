@@ -74,6 +74,20 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Form(
               key: _formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                // ── Logo + Titre ───────────────────────────────────────────
+                Row(children: [
+                  Image.asset('assets/logo_etat.png', height: 60),
+                  const SizedBox(width: 20),
+                  const Text('Ressources\nrelationnelles',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                        height: 1.3,
+                      )),
+                ]),
+                const SizedBox(height: 24),
+
                 const Text('Inscription à Ressources relationnelles',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800,
                         color: Color(0xFF1A1A1A), height: 1.3)),
