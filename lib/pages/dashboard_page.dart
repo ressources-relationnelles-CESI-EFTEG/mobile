@@ -160,7 +160,7 @@
             ...ressources.map((r) => Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () => Navigator.pushNamed(context, '/ressources'),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
