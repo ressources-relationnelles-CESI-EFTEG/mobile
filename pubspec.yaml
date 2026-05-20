@@ -28,12 +28,20 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  url_launcher: ^6.2.6
+  flutter_dsfr:
+    git:
+      url: https://github.com/Floating-Dartists/flutter_dsfr.git
+      ref: main
   flutter:
     sdk: flutter
+  intl: ^0.20.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  http: ^1.6.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -51,7 +59,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - assets/logo_etat.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
