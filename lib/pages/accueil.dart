@@ -45,30 +45,40 @@ class _AccueilPageState extends State<AccueilPage> {
                   color: AppColors.blueLight,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.people_alt_outlined,
-                    color: AppColors.white, size: 24),
+                child: const Icon(
+                  Icons.people_alt_outlined,
+                  color: AppColors.white,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Ressources Relationnelles',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.text)),
+                    Text(
+                      'Ressources Relationnelles',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.text,
+                      ),
+                    ),
                     SizedBox(height: 2),
-                    Text('Votre espace personnel',
-                        style: TextStyle(fontSize: 12, color: AppColors.grey)),
+                    Text(
+                      'Votre espace personnel',
+                      style: TextStyle(fontSize: 12, color: AppColors.grey),
+                    ),
                   ],
                 ),
               ),
               if (ApiService.session == null)
                 TextButton(
                   onPressed: () => Navigator.pushNamed(context, '/login'),
-                  child: const Text('Se connecter',
-                      style: TextStyle(fontSize: 13, color: AppColors.blueLight)),
+                  child: const Text(
+                    'Se connecter',
+                    style: TextStyle(fontSize: 13, color: AppColors.blueLight),
+                  ),
                 ),
             ],
           ),
@@ -78,10 +88,11 @@ class _AccueilPageState extends State<AccueilPage> {
           const Text(
             'Bienvenue sur la plateforme de ressources relationnelles',
             style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: AppColors.text,
-                height: 1.3),
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: AppColors.text,
+              height: 1.3,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -102,7 +113,8 @@ class _AccueilPageState extends State<AccueilPage> {
         color: const Color(0xFF3B82F6),
         surface: const Color(0xFFEFF6FF),
         title: 'Découvrir mes ressources',
-        description: 'Parcourez l\'ensemble des ressources disponibles sur la plateforme.',
+        description:
+            'Parcourez l\'ensemble des ressources disponibles sur la plateforme.',
         label: 'Explorer',
         onTap: () => Navigator.pushNamed(context, '/ressources'),
       ),
@@ -111,7 +123,8 @@ class _AccueilPageState extends State<AccueilPage> {
         color: const Color(0xFF10B981),
         surface: const Color(0xFFECFDF5),
         title: 'Dernières ressources',
-        description: 'Consultez les ressources ajoutées récemment par la communauté.',
+        description:
+            'Consultez les ressources ajoutées récemment par la communauté.',
         label: 'Voir les nouveautés',
         onTap: () => Navigator.pushNamed(context, '/ressources'),
       ),
@@ -120,7 +133,8 @@ class _AccueilPageState extends State<AccueilPage> {
         color: const Color(0xFF8B5CF6),
         surface: const Color(0xFFF5F3FF),
         title: 'Rechercher une ressource',
-        description: 'Trouvez rapidement une ressource par mot-clé, titre ou thème.',
+        description:
+            'Trouvez rapidement une ressource par mot-clé, titre ou thème.',
         label: 'Lancer une recherche',
         onTap: () => Navigator.pushNamed(context, '/ressources'),
       ),
@@ -129,7 +143,8 @@ class _AccueilPageState extends State<AccueilPage> {
         color: const Color(0xFFF59E0B),
         surface: const Color(0xFFFFFBEB),
         title: 'Ressources recommandées',
-        description: 'Des ressources sélectionnées pour vous selon votre profil.',
+        description:
+            'Des ressources sélectionnées pour vous selon votre profil.',
         label: 'Voir les recommandations',
         onTap: () => Navigator.pushNamed(context, '/ressources'),
       ),
@@ -138,10 +153,14 @@ class _AccueilPageState extends State<AccueilPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        children: cards.map((c) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _SectionCard(data: c),
-        )).toList(),
+        children: cards
+            .map(
+              (c) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _SectionCard(data: c),
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -203,26 +222,35 @@ class _SectionCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data.title,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.text)),
+                  Text(
+                    data.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(data.description,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.grey,
-                          height: 1.4)),
+                  Text(
+                    data.description,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.grey,
+                      height: 1.4,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   // Label lien
                   Row(
                     children: [
-                      Text(data.label,
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: data.color)),
+                      Text(
+                        data.label,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: data.color,
+                        ),
+                      ),
                       const SizedBox(width: 4),
                       Icon(Icons.arrow_forward, color: data.color, size: 14),
                     ],

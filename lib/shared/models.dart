@@ -31,25 +31,25 @@ class UserModel {
   String get fullName => '$firstName ${lastName[0]}.';
 
   factory UserModel.fromJson(Map<String, dynamic> d) => UserModel(
-        id: d['idUtilisateur'],
-        firstName: d['prenom'] ?? '',
-        lastName: d['nom'] ?? '',
-        avatarUrl: d['photoProfil'],
-        description: d['description'],
-        region: d['region'],
-        telephone: d['telephone'],
-        phraseAccroche: d['phraseAccroche'],
-        lastLogin: d['dateCreation'] != null
-            ? DateTime.parse(d['dateCreation'])
-            : DateTime.now(),
-      );
+    id: d['idUtilisateur'],
+    firstName: d['prenom'] ?? '',
+    lastName: d['nom'] ?? '',
+    avatarUrl: d['photoProfil'],
+    description: d['description'],
+    region: d['region'],
+    telephone: d['telephone'],
+    phraseAccroche: d['phraseAccroche'],
+    lastLogin: d['dateCreation'] != null
+        ? DateTime.parse(d['dateCreation'])
+        : DateTime.now(),
+  );
 
   static UserModel placeholder() => UserModel(
-        id: 0,
-        firstName: 'Marie',
-        lastName: 'Dupont',
-        lastLogin: DateTime.now(),
-      );
+    id: 0,
+    firstName: 'Marie',
+    lastName: 'Dupont',
+    lastLogin: DateTime.now(),
+  );
 }
 
 class RessourceModel {
@@ -84,31 +84,31 @@ class RessourceModel {
   });
 
   factory RessourceModel.fromJson(Map<String, dynamic> d) => RessourceModel(
-        id: d['idRessource'],
-        titre: d['titre'] ?? '',
-        description: d['description'],
-        contenu: d['contenu'] ?? '',
-        typeRessource: d['typeRessource'],
-        niveauDifficulte: d['niveauDifficulte'],
-        visibilite: d['visibilite'] ?? 'privee',
-        statut: d['statut'] ?? 'brouillon',
-        lienPartage: d['lienPartage'],
-        dateCreation: d['dateCreation'] != null
-            ? DateTime.parse(d['dateCreation'])
-            : DateTime.now(),
-        categorie: d['categorie'] as Map<String, dynamic>?,
-        utilisateur: d['utilisateur'] as Map<String, dynamic>?,
-        tags: d['tags'] as List<dynamic>? ?? [],
-      );
+    id: d['idRessource'],
+    titre: d['titre'] ?? '',
+    description: d['description'],
+    contenu: d['contenu'] ?? '',
+    typeRessource: d['typeRessource'],
+    niveauDifficulte: d['niveauDifficulte'],
+    visibilite: d['visibilite'] ?? 'privee',
+    statut: d['statut'] ?? 'brouillon',
+    lienPartage: d['lienPartage'],
+    dateCreation: d['dateCreation'] != null
+        ? DateTime.parse(d['dateCreation'])
+        : DateTime.now(),
+    categorie: d['categorie'] as Map<String, dynamic>?,
+    utilisateur: d['utilisateur'] as Map<String, dynamic>?,
+    tags: d['tags'] as List<dynamic>? ?? [],
+  );
 
   String get typeLabel => switch (typeRessource?.toLowerCase()) {
-        'video'    => 'Vidéo',
-        'audio'    => 'Audio',
-        'exercice' => 'Exercice',
-        'activite' => 'Activité',
-        'jeu'      => 'Jeu',
-        _          => 'Article',
-      };
+    'video' => 'Vidéo',
+    'audio' => 'Audio',
+    'exercice' => 'Exercice',
+    'activite' => 'Activité',
+    'jeu' => 'Jeu',
+    _ => 'Article',
+  };
 }
 
 class ConversationModel {
@@ -124,7 +124,8 @@ class ConversationModel {
     this.dernierMessage,
   });
 
-  factory ConversationModel.fromJson(Map<String, dynamic> d) => ConversationModel(
+  factory ConversationModel.fromJson(Map<String, dynamic> d) =>
+      ConversationModel(
         id: d['idConversation'],
         dateCreation: DateTime.parse(d['dateCreation']),
         participants: d['participants'] as List<dynamic>? ?? [],
@@ -174,14 +175,14 @@ class MessageModel {
   bool isMe(int myId) => idUtilisateur == myId;
 
   factory MessageModel.fromJson(Map<String, dynamic> d) => MessageModel(
-        id: d['idMessage'],
-        idConversation: d['idConversation'],
-        idUtilisateur: d['idUtilisateur'],
-        contenu: d['contenu'] ?? '',
-        dateEnvoi: DateTime.parse(d['dateEnvoi']),
-        lu: d['lu'] ?? false,
-        utilisateur: d['utilisateur'] as Map<String, dynamic>?,
-      );
+    id: d['idMessage'],
+    idConversation: d['idConversation'],
+    idUtilisateur: d['idUtilisateur'],
+    contenu: d['contenu'] ?? '',
+    dateEnvoi: DateTime.parse(d['dateEnvoi']),
+    lu: d['lu'] ?? false,
+    utilisateur: d['utilisateur'] as Map<String, dynamic>?,
+  );
 }
 
 class CategorieModel {
@@ -198,9 +199,9 @@ class CategorieModel {
   });
 
   factory CategorieModel.fromJson(Map<String, dynamic> d) => CategorieModel(
-        id: d['idCategorie'],
-        nom: d['nom'] ?? '',
-        description: d['description'],
-        parentId: d['parentId'],
-      );
+    id: d['idCategorie'],
+    nom: d['nom'] ?? '',
+    description: d['description'],
+    parentId: d['parentId'],
+  );
 }

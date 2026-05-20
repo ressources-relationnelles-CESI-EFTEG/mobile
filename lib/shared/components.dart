@@ -8,15 +8,15 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: child,
-      );
+    width: double.infinity,
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: AppColors.border),
+    ),
+    child: child,
+  );
 }
 
 // ─── SECTION TITLE ────────────────────────────────────────────────────────────
@@ -27,12 +27,12 @@ class SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          Icon(icon, color: AppColors.blue, size: 18),
-          const SizedBox(width: 8),
-          Text(title, style: AppText.sectionTitle),
-        ],
-      );
+    children: [
+      Icon(icon, color: AppColors.blue, size: 18),
+      const SizedBox(width: 8),
+      Text(title, style: AppText.sectionTitle),
+    ],
+  );
 }
 
 // ─── LINK ROW ─────────────────────────────────────────────────────────────────
@@ -40,17 +40,24 @@ class LinkRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
-  const LinkRow({super.key, required this.icon, required this.label, this.onTap});
+  const LinkRow({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Row(children: [
-          Icon(icon, size: 16, color: AppColors.blueLight),
-          const SizedBox(width: 6),
-          Text(label, style: AppText.link),
-        ]),
-      );
+    onTap: onTap,
+    child: Row(
+      children: [
+        Icon(icon, size: 16, color: AppColors.blueLight),
+        const SizedBox(width: 6),
+        Text(label, style: AppText.link),
+      ],
+    ),
+  );
 }
 
 // ─── TAG CHIP ─────────────────────────────────────────────────────────────────
@@ -60,15 +67,20 @@ class TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: AppColors.blueSurface,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(label,
-            style: const TextStyle(
-                fontSize: 11, color: AppColors.blueLight, fontWeight: FontWeight.w600)),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    decoration: BoxDecoration(
+      color: AppColors.blueSurface,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(
+        fontSize: 11,
+        color: AppColors.blueLight,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  );
 }
 
 // ─── BADGE ────────────────────────────────────────────────────────────────────
@@ -78,15 +90,20 @@ class AppBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(
-          color: AppColors.blueSurface,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(label,
-            style: const TextStyle(
-                fontSize: 10, color: AppColors.blueLight, fontWeight: FontWeight.w600)),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+    decoration: BoxDecoration(
+      color: AppColors.blueSurface,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(
+        fontSize: 10,
+        color: AppColors.blueLight,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  );
 }
 
 // ─── PRIMARY BUTTON ───────────────────────────────────────────────────────────
@@ -98,19 +115,22 @@ class PrimaryBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.blueLight,
-          foregroundColor: AppColors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 0,
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          if (icon != null) ...[Icon(icon, size: 16), const SizedBox(width: 6)],
-          Text(label, style: const TextStyle(fontSize: 13)),
-        ]),
-      );
+    onPressed: onTap,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.blueLight,
+      foregroundColor: AppColors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 0,
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null) ...[Icon(icon, size: 16), const SizedBox(width: 6)],
+        Text(label, style: const TextStyle(fontSize: 13)),
+      ],
+    ),
+  );
 }
 
 // ─── SECONDARY BUTTON ─────────────────────────────────────────────────────────
@@ -122,16 +142,19 @@ class SecondaryBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.blueLight,
-          side: const BorderSide(color: AppColors.blueLight),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          if (icon != null) ...[Icon(icon, size: 16), const SizedBox(width: 6)],
-          Text(label, style: const TextStyle(fontSize: 13)),
-        ]),
-      );
+    onPressed: onTap,
+    style: OutlinedButton.styleFrom(
+      foregroundColor: AppColors.blueLight,
+      side: const BorderSide(color: AppColors.blueLight),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null) ...[Icon(icon, size: 16), const SizedBox(width: 6)],
+        Text(label, style: const TextStyle(fontSize: 13)),
+      ],
+    ),
+  );
 }
