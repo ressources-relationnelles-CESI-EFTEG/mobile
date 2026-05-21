@@ -1,5 +1,14 @@
 # Ressources Relationnelles — Mobile
 
+[![CI](https://github.com/ressources-relationnelles-CESI-EFTEG/mobile/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ressources-relationnelles-CESI-EFTEG/mobile/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/ressources-relationnelles-CESI-EFTEG/mobile/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/ressources-relationnelles-CESI-EFTEG/mobile/actions/workflows/github-code-scanning/codeql)
+[![Latest Release](https://img.shields.io/github/v/release/ressources-relationnelles-CESI-EFTEG/mobile?label=release&color=blue)](https://github.com/ressources-relationnelles-CESI-EFTEG/mobile/releases)
+[![Licence Ouverte 2.0](https://img.shields.io/badge/Licence-Ouverte_2.0_(Etalab)-000091)](./LICENSE)
+
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.11-0175C2?logo=dart&logoColor=white)
+![DSFR](https://img.shields.io/badge/DSFR-flutter__dsfr-000091)
+
 Application mobile Flutter de la plateforme **Ressources (Re)lationnelles**. Permet aux citoyens de consulter et partager des ressources liées aux relations (famille, couple, amitié, etc.), d'échanger via la messagerie interne et de gérer leur profil. Design System de l'État Français (DSFR via `flutter_dsfr`).
 
 ## Prérequis
@@ -160,3 +169,11 @@ Mêmes comptes que le backend, mot de passe unique : **`Password123!`**
 | Administrateur | admin@rr.local |
 | Modérateur | moderateur@rr.local |
 | Citoyen | citoyen@rr.local |
+
+## Licence
+
+Ce projet est distribué sous **[Licence Ouverte 2.0 (Etalab)](./LICENSE)** — la licence officielle de l'État français pour les codes sources et données publiques, conçue pour le secteur public et compatible avec les licences CC-BY, ODC-BY et OGL.
+
+Vous pouvez librement réutiliser, modifier, redistribuer et exploiter ce code, y compris à des fins commerciales, sous la seule condition de mentionner la paternité (source : *Ressources Relationnelles — CESI EFTEG*) et la date de dernière mise à jour de l'information réutilisée.
+
+Choix motivé par le contexte ministériel du projet : la Licence Ouverte est notamment retenue par `data.gouv.fr`, Etalab, beta.gouv.fr et le SocialGouv.
