@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Incident de sécurité
+    url: https://github.com/ressources-relationnelles-CESI-EFTEG/mobile/security/advisories/new
+    about: "Pour une faille de sécurité (transport en clair, stockage non chiffré, etc.), utiliser un avis de sécurité privé plutôt qu'une issue publique."
+  - name: Faille côté API
+    url: https://github.com/ressources-relationnelles-CESI-EFTEG/backend/security/advisories/new
+    about: "Pour une faille qui concerne l'API et non l'app mobile, signaler dans le repo backend."
