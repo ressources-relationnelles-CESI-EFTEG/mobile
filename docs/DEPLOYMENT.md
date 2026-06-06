@@ -256,7 +256,7 @@ flutter build ios --release --build-number=<buildNumber>
 
 ### V1.0 — Artefact GitHub Actions (Debug)
 
-La CI GitHub Actions (`.github/workflows/ci.yml`) construit un APK debug à chaque push sur `main` :
+La CI GitHub Actions (`.github/workflows/ci.yml`) construit un APK debug à chaque push sur `main`, `preprod` et `develop` :
 
 ```yaml
 - name: Build Android APK (debug)
@@ -269,7 +269,7 @@ La CI GitHub Actions (`.github/workflows/ci.yml`) construit un APK debug à chaq
 ```
 
 **Utilisation** :
-1. Après un push sur `main`, attendre la fin du workflow CI.
+1. Après un push sur `main`, `preprod` ou `develop`, attendre la fin du workflow CI.
 2. Télécharger l'APK depuis l'onglet "Actions" de GitHub.
 3. Installer manuellement sur un appareil/émulateur.
 
@@ -370,7 +370,7 @@ nano pubspec.yaml
 git add .
 git commit -m "hotfix(mobile): <description>"
 
-# 4. Push et PR
+# 4. Push et PR vers main
 git push origin hotfix/description-courte
 
 # 5. Une fois mergée sur main :
@@ -382,6 +382,11 @@ flutter build apk --release
 # 7. Tag
 git tag v1.0.1
 git push origin v1.0.1
+
+# 8. Propager le hotfix en aval (preprod et develop)
+#    pour éviter qu'il ne soit écrasé au prochain merge normal
+git checkout preprod && git pull && git merge --no-ff origin/main && git push
+git checkout develop && git pull && git merge --no-ff origin/preprod && git push
 ```
 
 ---
@@ -422,9 +427,28 @@ git push origin v1.0.1
 
 ## CI/CD
 
+### Stratégie GitFlow
+
+Le projet suit un GitFlow à **quatre branches d'intégration** :
+
+```
+feat/* | fix/* | chore/* | docs/*
+        │
+        ▼
+     develop ──► preprod ──► main
+```
+
+| Branche | Rôle | Cible de déploiement |
+|---|---|---|
+| `develop` | Intégration des fonctionnalités terminées | Build APK debug — testeurs internes |
+| `preprod` | Stabilisation et validation finale avant publication store | Distribution Firebase App Distribution (**roadmap V1.1**) — testeurs élargis |
+| `main` | Version stable de production, taguée par release | Publication Google Play / App Store |
+
+Chaque fusion `develop → preprod` puis `preprod → main` passe par une pull request avec revue de code et validation des status checks.
+
 ### Workflow GitHub Actions (`.github/workflows/ci.yml`)
 
-Déclenché à chaque push sur `main` et `develop` :
+Déclenché à chaque push et pull request sur `main`, `preprod` et `develop` :
 
 | Étape | Commande | Artefact |
 |---|---|---|
@@ -433,13 +457,13 @@ Déclenché à chaque push sur `main` et `develop` :
 | **Build Android APK** | `flutter build apk --debug` | `app-debug.apk` |
 | **Artifact upload** | `actions/upload-artifact@v3` | APK en téléchargement |
 
-### Protection branch `main`
+### Protection des branches `main` et `preprod`
 
 - [ ] Exiger que les PRs passent tous les checks CI avant merge
 - [ ] Exiger au moins une approbation avant merge
-- [ ] Interdire les push directs sur `main` (passer par PR)
+- [ ] Interdire les push directs sur `main` et `preprod` (passer par PR)
 
-Configurer via **GitHub Settings → Branches → Branch protection rules** pour `main`.
+Configurer via **GitHub Settings → Branches → Branch protection rules** pour `main` et `preprod`.
 
 ---
 

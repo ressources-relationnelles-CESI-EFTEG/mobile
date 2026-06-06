@@ -119,6 +119,8 @@ curl http://localhost:3001/health
 
 ### Étape 3 — Correction
 
+Un hotfix court-circuite le flux normal (`develop → preprod → main`) en branchant directement depuis `main`, puis se propage en aval pour garder les branches synchronisées.
+
 ```bash
 # 1. Créer branche depuis main
 git checkout main
@@ -143,10 +145,18 @@ git commit -m "hotfix(screen): <description>"
 git push origin hotfix/description-courte
 ```
 
-La PR doit :
+La PR vers `main` doit :
 - Passer tous les checks CI (analyze, test, build APK)
 - Être approuvée par au moins un autre développeur
 - Être mergée en **squash merge** pour historique lisible
+
+```bash
+# 7. Une fois mergée sur main, propager le correctif en aval
+#    (preprod et develop) pour éviter qu'il soit écrasé au prochain
+#    merge normal develop → preprod → main
+git checkout preprod && git pull && git merge --no-ff origin/main && git push
+git checkout develop && git pull && git merge --no-ff origin/preprod && git push
+```
 
 ### Étape 4 — Post-mortem
 

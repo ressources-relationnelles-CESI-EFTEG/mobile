@@ -222,7 +222,9 @@ Activer les alertes sur GitHub (Settings → Code security → Dependabot alerts
 # 2. Ou désactivation fonctionnalité via feature flag backend
 
 # Si faille mobile (ex. injection, reverse engineering) :
-# 1. Créer branche hotfix sur main
+# 1. Créer branche hotfix depuis main
+git checkout main
+git pull origin main
 git checkout -b hotfix/security-issue
 # 2. Appliquer correctif dans lib/
 # 3. Version bump pubspec.yaml : version: x.y.z+n → x.y.(z+1)+(n+1)
@@ -247,6 +249,11 @@ git pull
 flutter build apk --release --...
 # Upload Google Play Console
 # Upload App Store Connect (V1.1)
+
+# Propager le correctif en aval (preprod et develop)
+# pour éviter qu'il soit écrasé au prochain merge normal
+git checkout preprod && git pull && git merge --no-ff origin/main && git push
+git checkout develop && git pull && git merge --no-ff origin/preprod && git push
 ```
 
 **Délai global** : code prêt en 4–24 h, mais utilisateurs reçoivent la version via le store en **24–72 h** (Google Play) ou **1–3 jours** (App Store).
