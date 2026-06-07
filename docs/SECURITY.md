@@ -300,7 +300,7 @@ async getResources() {
 **Utilisation** :
 
 ```bash
-# .env.production
+# .env.prod (backend)
 DISABLE_RESSOURCES=true
 
 # Redémarrer API
@@ -321,7 +321,7 @@ Les utilisateurs recevront une erreur 503 sans app update requis.
 # Générer nouveau secret
 openssl rand -base64 64
 
-# Mettre à jour .env.production backend
+# Mettre à jour .env.prod backend
 # Redémarrer API (invalide tous tokens existants)
 # Utilisateurs devront se reconnecter → acceptable pour app à haute valeur
 ```
