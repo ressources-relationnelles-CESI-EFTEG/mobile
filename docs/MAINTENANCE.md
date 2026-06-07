@@ -4,7 +4,7 @@
 
 Le suivi opérationnel s'appuie sur **deux outils complémentaires** :
 
-- **GitHub Issues + Projects** — catalogue technique des fonctionnalités, anomalies et tâches techniques. Chaque issue est liée nativement aux commits, branches et pull requests (closing keywords, mentions, références croisées) : la traçabilité code ↔ ticket est automatique. Les templates structurés (`.github/ISSUE_TEMPLATE/bug_report.md`, `feature_request.md`) garantissent que chaque demande contient les informations nécessaires.
+- **GitHub Issues** — catalogue technique des fonctionnalités, anomalies et tâches techniques. Chaque issue est liée nativement aux commits, branches et pull requests (closing keywords, mentions, références croisées) : la traçabilité code ↔ ticket est automatique. Les templates structurés (`.github/ISSUE_TEMPLATE/bug_report.md`, `feature_request.md`) garantissent que chaque demande contient les informations nécessaires. Les **GitHub Milestones** sont utilisées pour le suivi par release (ex. `v1.0.0`, `v1.1.0`, `v2.0.0`).
 
 - **Trello** — pilotage opérationnel quotidien : visualisation kanban, priorisation visuelle, planification de sprint, répartition des assignations dans l'équipe. Les cartes Trello en cours référencent les issues GitHub correspondantes.
 
@@ -54,9 +54,12 @@ Fichiers disponibles dans `.github/ISSUE_TEMPLATE/` :
 
 **Security report** — **pas d'issue publique**. Contacter DPO via email privé au lieu de GitHub.
 
-### GitHub Project board (Kanban)
+### Trello — pilotage visuel
 
-Structure recommandée :
+Le tableau Kanban opérationnel est hébergé sur **Trello**. Chaque carte
+référence l'issue GitHub correspondante pour garder le lien code ↔ ticket.
+
+Structure de colonnes :
 
 ```
 ┌──────────┬──────────────┬───────────┬──────┐
@@ -67,9 +70,8 @@ Structure recommandée :
 └──────────┴──────────────┴───────────┴──────┘
 ```
 
-- Chaque issue associée à une **Milestone** (ex. `v1.0.0`, `v1.1.0`, `v2.0.0`)
-- Labels `priority:*` et `platform:*` / `screen:*` pour tri et assignation
-- Issues fermées automatiquement via closing keywords dans PRs (`Fixes #123`)
+- Les labels `priority:*` et `platform:*` / `screen:*` facilitent le tri et l'assignation dans la liste GitHub Issues comme dans le filtre Trello.
+- Les issues sont fermées automatiquement via closing keywords dans les PRs (`Fixes #123`), ce qui maintient la cohérence avec l'avancement des cartes Trello.
 
 ---
 
