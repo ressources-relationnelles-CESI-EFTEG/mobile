@@ -8,9 +8,9 @@ L'OWASP Mobile Top 10 est distinct de l'OWASP Web Top 10. Il cible les vulnérab
 |---|---|---|---|
 | **M1** | Improper Credential Usage | Mitigé | Token JWT stocké en mémoire RAM uniquement (pas de persistance disque). Pas de stockage de mot de passe client. Expiration token 1 h (côté backend, synchronisé avec session). |
 | **M2** | Inadequate Supply Chain Security | Mitigé | Dépendances déclarées dans `pubspec.yaml`. `flutter pub get` utilise pub.dev (registry officiel Dart). Pas de dépendances git non vérifiées. Dependabot activé pour alertes vulnérabilités (`flutter_dsfr` = paquet officiel). |
-| **M3** | Insecure Authentication / Authorization | Mitigé | Authentification JWT Bearer (token signé HMAC-SHA256). Validation côté backend systématique (guards NestJS). Pas de réutilisation de token après logout. Expiration 1 h. Pas de refresh token implémenté (roadmap V1.1). |
+| **M3** | Insecure Authentication / Authorization | Mitigé | Authentification JWT Bearer (token signé HMAC-SHA256). Validation côté backend systématique (guards NestJS). Pas de réutilisation de token après logout. Expiration 1 h. Pas de refresh token implémenté (roadmap V1.2.0). |
 | **M4** | Insufficient Input/Output Validation | Atténué | Validation côté backend obligatoire (DTOs NestJS). Côté mobile : validation de base (email regex, champs required). Affichage de données utilisateur via interpolation Dart (pas d'injection de code). |
-| **M5** | Insecure Communication | Atténué | HTTP en développement (sur LAN de test, préliminaire). HTTPS obligatoire en production (certificat TLS backend). Pas de pinning certificat implémenté (roadmap V1.1). Aucun proxy d'interception détectable sans confiance utilisateur. |
+| **M5** | Insecure Communication | Atténué | HTTP en développement (sur LAN de test, préliminaire). HTTPS obligatoire en production (certificat TLS backend). Pas de pinning certificat implémenté (roadmap V1.2.0). Aucun proxy d'interception détectable sans confiance utilisateur. |
 | **M6** | Inadequate Privacy Controls | Couvert | Token en mémoire (perdu fermeture app). Pas de tracker tiers embarqué (Google Analytics, Firebase Analytics). Pas de partage de données avec services externes. Permissions Android/iOS minimales (`image_picker` seul demande Camera/Photos). |
 | **M7** | Insufficient Binary Protections | Partiel | APK debug non obfusquée (dev). APK release : obfuscation Dart natif via `flutter build apk --release`. Pas de code natif (C/C++) exposant secrets. Reverse engineering possible mais URL backend seule n'est pas sensible. |
 | **M8** | Security Misconfiguration | Mitigé | Configuration unifiée dans `lib/shared/api_service.dart`. Debug mode désactivé en release. Permissions Android/iOS restreintes au strict nécessaire. Pas de logs verbeux exposant tokens ou identifiants. |
@@ -34,7 +34,7 @@ L'OWASP Mobile Top 10 est distinct de l'OWASP Web Top 10. Il cible les vulnérab
 | R7 | Permissions Android/iOS excessives | 2 | 3 | 6 — Moyen | Déclarer uniquement `camera`, `photos` (image_picker), aucune permission réseau/localisation non-nécessaire. | Audit manifest, revue permissions store (Google Play / App Store) |
 | R8 | Dépendance npm/pub vulnérable | 3 | 3 | 9 — Moyen | `flutter pub outdated`, Dependabot activé, mise à jour 48 h. | Mise à jour dépendance ou recherche alternative |
 | R9 | Faille côté API backend (renvoie données sensibles) | 3 | 4 | 12 — Élevé | Mobile transmet requêtes telles quelles → validation backend systématique. Mobile ne valide pas données reçues. | Patch backend rapide, notification utilisateurs app |
-| R10 | Session HTTP en clair (man-in-the-middle) | 3 | 5 | 15 — Élevé | HTTPS obligatoire production. Pinning certificat (roadmap V1.1). | Mise à jour app avec certificat nouveau, notification urgente |
+| R10 | Session HTTP en clair (man-in-the-middle) | 3 | 5 | 15 — Élevé | HTTPS obligatoire production. Pinning certificat (roadmap V1.2.0). | Mise à jour app avec certificat nouveau, notification urgente |
 
 > Les risques de criticité ≥ 10 (Élevé et Critique) sont traités en priorité et réévalués lors de la revue annuelle.
 
@@ -62,7 +62,7 @@ L'OWASP Mobile Top 10 est distinct de l'OWASP Web Top 10. Il cible les vulnérab
 - **Stockage** : variable statique `ApiService.session`, non persistée
 - **Transmission** : en-tête `Authorization: Bearer <token>`
 
-### Refresh token — Roadmap V1.1
+### Refresh token — Roadmap V1.2.0
 
 Actuellement : pas de refresh token implémenté. Une fois expiration 1 h atteinte, utilisateur doit se reconnecter.
 
@@ -160,7 +160,7 @@ Pour développement, autoriser HTTP non-chiffré temporairement :
 
 **En production** : supprimer cette exemption, TLS obligatoire.
 
-### Certificate Pinning — Roadmap V1.1
+### Certificate Pinning — Roadmap V1.2.0
 
 Actuellement : accepte tout certificat TLS valide (sans pinning).
 
@@ -210,7 +210,7 @@ Activer les alertes sur GitHub (Settings → Code security → Dependabot alerts
 ### Étape 1 — Détection
 
 - Utilisateur signale bug via GitHub Issues (label `security`)
-- Crash rapporté par Firebase Crashlytics (roadmap V1.1)
+- Crash rapporté par Firebase Crashlytics (roadmap V1.2.0)
 - Scan de sécurité détecte vulnérabilité (npm audit / pub)
 - Audit manuel découvre faille
 
