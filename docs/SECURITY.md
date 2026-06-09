@@ -21,22 +21,22 @@ L'OWASP Mobile Top 10 est distinct de l'OWASP Web Top 10. Il cible les vulnérab
 
 ## Matrice des risques (probabilité × impact)
 
-Échelle : Faible (1) · Moyen (2) · Élevé (3). **Criticité = Probabilité × Impact**.
+Échelle : Probabilité et Impact notés de 1 à 5. Criticité = Probabilité × Impact. Bandes : 1–5 Faible · 6–9 Moyen · 10–15 Élevé · 16–25 Critique.
 
 | # | Risque / vulnérabilité | Probabilité | Impact | Criticité | Action préventive | Action corrective |
 |---|---|:---:|:---:|:---:|---|---|
-| R1 | Vol de token JWT via XSS (si code JavaScript côté mobile, non-applicable Dart natif) | Très faible | Élevé | 1 | Dart natif → pas de XSS. Validation backend systématique. Expiration 1 h. | Rotation `AUTH_TOKEN_SECRET` backend invalide tous tokens |
-| R2 | Attaque brute-force sur `/auth/login` | Moyen | Moyen | 4 | `ThrottlerGuard` 5 req/min côté backend. Politique mot de passe forte 12 chars + complexité. | Blocage IP temporaire, notification utilisateur |
-| R3 | Reverse engineering APK (extraction URL backend) | Élevé | Faible | 2 | URL codée en dur ne contient aucun secret. Tous les secrets restent backend. Obfuscation release. | Non-critère (pas de secret mobile). Stratégie : ne jamais embarquer secrets. |
-| R4 | Tap-jacking / clickjacking (UI injection) | Très faible | Moyen | 1 | DSFR composants officiels. Pas de WebView côté app. Pas de gestion d'intent non-sécurisée. | Audit intent schemes, vérifier StrictMode activé |
-| R5 | Vol d'appareil avec session active | Moyen | Moyen | 4 | Token en mémoire → perdu à fermeture/redémarrage. Pas de SharedPreferences. | À la perte, utilisateur ne peut plus accéder. Pas de récupération token possible. |
-| R6 | Logs verbeux exposant données utilisateur | Moyen | Moyen | 4 | Pas de `print()` / `debugPrint()` contenant tokens, emails, données perso en release. | Code review, audit logs, suppression données sensibles |
-| R7 | Permissions Android/iOS excessives | Faible | Moyen | 2 | Déclarer uniquement `camera`, `photos` (image_picker), aucune permission réseau/localisation non-nécessaire. | Audit manifest, revue permissions store (Google Play / App Store) |
-| R8 | Dépendance npm/pub vulnérable | Moyen | Moyen | 4 | `flutter pub outdated`, Dependabot activé, mise à jour 48 h. | Mise à jour dépendance ou recherche alternative |
-| R9 | Faille côté API backend (renvoie données sensibles) | Moyen | Élevé | 6 | Mobile transmet requêtes telles quelles → validation backend systématique. Mobile ne valide pas données reçues. | Patch backend rapide, notification utilisateurs app |
-| R10 | Session HTTP en clair (man-in-the-middle) | Moyen (si HTTP dev) | Élevé | 6 | HTTPS obligatoire production. Pinning certificat (roadmap V1.1). | Mise à jour app avec certificat nouveau, notification urgente |
+| R1 | Vol de token JWT via XSS (si code JavaScript côté mobile, non-applicable Dart natif) | 1 | 4 | 4 — Faible | Dart natif → pas de XSS. Validation backend systématique. Expiration 1 h. | Rotation `AUTH_TOKEN_SECRET` backend invalide tous tokens |
+| R2 | Attaque brute-force sur `/auth/login` | 4 | 3 | 12 — Élevé | `ThrottlerGuard` 5 req/min côté backend. Politique mot de passe forte 12 chars + complexité. | Blocage IP temporaire, notification utilisateur |
+| R3 | Reverse engineering APK (extraction URL backend) | 4 | 2 | 8 — Moyen | URL codée en dur ne contient aucun secret. Tous les secrets restent backend. Obfuscation release. | Non-critère (pas de secret mobile). Stratégie : ne jamais embarquer secrets. |
+| R4 | Tap-jacking / clickjacking (UI injection) | 1 | 3 | 3 — Faible | DSFR composants officiels. Pas de WebView côté app. Pas de gestion d'intent non-sécurisée. | Audit intent schemes, vérifier StrictMode activé |
+| R5 | Vol d'appareil avec session active | 3 | 3 | 9 — Moyen | Token en mémoire → perdu à fermeture/redémarrage. Pas de SharedPreferences. | À la perte, utilisateur ne peut plus accéder. Pas de récupération token possible. |
+| R6 | Logs verbeux exposant données utilisateur | 3 | 3 | 9 — Moyen | Pas de `print()` / `debugPrint()` contenant tokens, emails, données perso en release. | Code review, audit logs, suppression données sensibles |
+| R7 | Permissions Android/iOS excessives | 2 | 3 | 6 — Moyen | Déclarer uniquement `camera`, `photos` (image_picker), aucune permission réseau/localisation non-nécessaire. | Audit manifest, revue permissions store (Google Play / App Store) |
+| R8 | Dépendance npm/pub vulnérable | 3 | 3 | 9 — Moyen | `flutter pub outdated`, Dependabot activé, mise à jour 48 h. | Mise à jour dépendance ou recherche alternative |
+| R9 | Faille côté API backend (renvoie données sensibles) | 3 | 4 | 12 — Élevé | Mobile transmet requêtes telles quelles → validation backend systématique. Mobile ne valide pas données reçues. | Patch backend rapide, notification utilisateurs app |
+| R10 | Session HTTP en clair (man-in-the-middle) | 3 | 5 | 15 — Élevé | HTTPS obligatoire production. Pinning certificat (roadmap V1.1). | Mise à jour app avec certificat nouveau, notification urgente |
 
-> Les risques de criticité ≥ 4 sont traités en priorité et réévalués lors de la revue annuelle.
+> Les risques de criticité ≥ 10 (Élevé et Critique) sont traités en priorité et réévalués lors de la revue annuelle.
 
 ---
 
