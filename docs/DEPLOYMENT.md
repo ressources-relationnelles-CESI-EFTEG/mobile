@@ -24,7 +24,7 @@ Le client mobile Flutter communique exclusivement avec l'API backend. Aucune log
 |---|---|---|---|---|
 | **Développement** | Émulateur Android / Simulateur iOS | `http://10.0.2.2:3001` (Android) `http://127.0.0.1:3001` (iOS) | Debug | Android + iOS |
 | **Test** | Appareil physique (LAN) | `http://<IP-hôte>:3001` | Debug | Android + iOS |
-| **Pré-production** | Appareil physique / Firebase | HTTPS `https://api.test.rr.gouv.fr` | Release | Android + iOS (roadmap) |
+| **Pré-production** | Appareil physique / Firebase | HTTPS `https://api.test.rr.gouv.fr` | Release | Android + iOS (roadmap V1.2.0) |
 | **Production** | Google Play / App Store | HTTPS `https://api.rr.gouv.fr` | Release | Android (v1.0) + iOS (v1.1) |
 
 ---
@@ -115,7 +115,7 @@ flutter pub get
 flutter run
 ```
 
-### Roadmap V1.1 : environnement via `--dart-define`
+### Roadmap V1.2.0 : environnement via `--dart-define`
 
 Passer l'URL en variable de compilation au lieu de la coder en dur :
 
@@ -174,7 +174,7 @@ Sortie : `build/app/outputs/apk/release/app-release.apk`
 
 **Taille** : ~30–50 MB (optimisé, symboles supprimés).
 
-### Build APK Release (signé) — Roadmap V1.1
+### Build APK Release (signé) — Roadmap V1.2.0
 
 **Créer une clé de signature** (une seule fois) :
 
@@ -229,7 +229,7 @@ Sortie : `build/app/outputs/bundle/release/app-release.aab`
 
 ---
 
-## Build iOS — Roadmap V1.1
+## Build iOS — Roadmap V1.2.0
 
 **Prérequis** :
 - macOS (obligatoire)
@@ -441,7 +441,7 @@ feat/* | fix/* | chore/* | docs/*
 | Branche | Rôle | Cible de déploiement |
 |---|---|---|
 | `develop` | Intégration des fonctionnalités terminées | Build APK debug — testeurs internes |
-| `preprod` | Stabilisation et validation finale avant publication store | Distribution Firebase App Distribution (**roadmap V1.1**) — testeurs élargis |
+| `preprod` | Stabilisation et validation finale avant publication store | Distribution Firebase App Distribution (**roadmap V1.2.0**) — testeurs élargis |
 | `main` | Version stable de production, taguée par release | Publication Google Play / App Store |
 
 Chaque fusion `develop → preprod` puis `preprod → main` passe par une pull request avec revue de code et validation des status checks.
@@ -500,7 +500,7 @@ Accès app : simulateur/émulateur affiche l'écran de connexion.
 
 L'application n'embarque aucun secret (clé API, token). Tous les secrets sont gérés côté backend (auth token, credentials BDD).
 
-### V1.1 Roadmap — Keystore signatures
+### V1.2.0 Roadmap — Keystore signatures
 
 **Sécuriser la clé privée** (`ressources-relationnelles.jks`) :
 
