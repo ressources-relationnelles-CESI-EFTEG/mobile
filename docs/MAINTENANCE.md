@@ -96,7 +96,7 @@ Structure de colonnes :
 
 Les incidents sont détectés par :
 - **Utilisateur** : signalement via GitHub Issues ou `/contact` frontend
-- **Monitoring externe** (roadmap V1.1) : Firebase Crashlytics, UptimeRobot
+- **Monitoring externe** (roadmap V1.2.0) : Firebase Crashlytics, UptimeRobot
 - **Audit manuel** : revue code, tests E2E
 
 ### Étape 2 — Diagnostic
@@ -113,7 +113,7 @@ flutter logs
 # 3. Vérifier que le backend est accessible
 curl http://localhost:3001/health
 
-# 4. Si crash crash : vérifier Firebase Crashlytics (roadmap V1.1)
+# 4. Si crash crash : vérifier Firebase Crashlytics (roadmap V1.2.0)
 # → https://console.firebase.google.com
 
 # 5. Analyser l'issue GitHub : reproduction steps, environnement
@@ -368,7 +368,7 @@ flutter build apk --debug
 
 ## Monitoring et observabilité
 
-### Firebase Crashlytics — Roadmap V1.1
+### Firebase Crashlytics — Roadmap V1.2.0
 
 Capturer les crashes runtime côté mobile.
 
